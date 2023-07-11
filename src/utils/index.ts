@@ -41,7 +41,7 @@ export const uuid = () => {
   return uuid;
 }
 
-export const makeSVG = (tag: string, attrs: Record<string, string> = {}) => {
+export const makeSVG = (tag: string, attrs: Record<string, string | number> = {}) => {
   const ns = 'http://www.w3.org/2000/svg', xlinkns = 'http://www.w3.org/1999/xlink';
   const el = document.createElementNS(ns, tag);
   
@@ -51,7 +51,7 @@ export const makeSVG = (tag: string, attrs: Record<string, string> = {}) => {
   }
   // 动态插入 svg 子元素
   for (let k in attrs) {
-    k === 'xlink:href' ? el.setAttributeNS(xlinkns, k, attrs[k]) : el.setAttribute(k, attrs[k]);
+    k === 'xlink:href' ? el.setAttributeNS(xlinkns, k, attrs[k] as string) : el.setAttribute(k, attrs[k] as string);
   }
 
   return el
