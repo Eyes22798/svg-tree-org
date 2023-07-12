@@ -57,16 +57,16 @@
 			if (!arr || arr.length <= 0) return
 
 			const y = parent ? (parent.yStart + parent.line1 + parent.line2 + parent.height) : 0  // line1 line2 参见 node.js
-			const x = parent ? (parent.xStart + parent.line1 + parent.line2 + parent.width) : 0  // line1 line2 参见 node.js
-
+			const x = parent ? (parent.xStart + parent.line1 + parent.line2 + parent.width) : 0   // line1 line2 参见 node.js
+			
 			arr.forEach((v: TreeNode, i) => {
-				v.treeDirection = this.direction
 				const node = new TreeNode(v)
 				node.yStart = y
 				if (this.direction === 'vertical') node.xStart = x
 				node.parentNode = parent
 				node.prevNode = arr[i - 1]
 				node.toolsHandle = this.toolsHandle  // 操作按钮
+				node.treeDirection = this.direction  // 树的方向
 				arr[i] = node
 
 				if (levelXStart[v.level] > xStart) xStart = levelXStart[v.level]
@@ -79,8 +79,8 @@
 
 					const end = node.children[node.children.length - 1], first = node.children[0]
 
-					const nowXStart = (end.xStart + end.width - first.xStart - node.width) / 2 + first.xStart
-					const nowYStart = (end.yStart + end.height - first.yStart - node.height) / 2 + first.yStart
+					const nowXStart = (end.xStart + end.width - first.xStart - node.width) / 2 + first.xStart // 计算子节点中最左和最右节点的中间位置
+					const nowYStart = (end.yStart + end.height - first.yStart - node.height) / 2 + first.yStart // 计算子节点中最上和最下节点的中间位置
 
 					const nowLimit = this.direction === 'vertical' ? nowYStart < minYStart : nowXStart < minXStart
 					if (nowLimit) { // 可能有重叠块，重新计算一下位置
@@ -146,8 +146,6 @@
 		}
 
     func(this.data as unknown as Array<Node>)
-
-		// console.log(this.data)
 
 		this.$svg.setAttribute('width', String(svgWidth + 300))
 		this.$svg.setAttribute('height', String(svgHeight + 300))

@@ -1,11 +1,11 @@
 import { makeSVG } from './utils'
 import type { Node } from './type'
 
-const lineColor = '#4ec2ff';               // 线条颜色
-const lineWidth = 2;                       // 线条宽度
+const lineColor = '#ddd';               	 // 线条颜色
+const lineWidth = 1;                    	 // 线条宽度
 const collapseSize = 6;                    // 折叠点圆圈尺寸
 
-const fontSize = 13;                       // 节点文本字号
+const fontSize = 14;                       // 节点文本字号
 const paddingSize = 5;                     // 一个节点的padding值
 const marginSize = 40;                     // 一个节点的右边距
 const line1 = 30;                          //  父子节点间距（上方）
@@ -14,7 +14,7 @@ const maxWidth = 200;                      // 节点矩形框最大宽度
 const maxHeight = 200;                     // 节点矩形框最大高度
 const lineHeight = 10;                     // 文字行间距
 const letterSpacing = 3;                   // 文字字符间距
-const toolsHeight = 30
+const toolsHeight = 10
 
 export class TreeNode {
 	id!: number | string
@@ -88,8 +88,7 @@ export class TreeNode {
 			nodeText = [name]
 		}
 
-
-		if (w < 90) w = 90               // 按钮宽度预留
+		if (w < 120) w = 120               // 按钮宽度预留
 
 		this.width = w
 		this.height = h + toolsHeight   // 此处的fontSize 表示负责人一横数据高度
@@ -105,7 +104,7 @@ export class TreeNode {
 			y: this.yStart,
 			width: this.width,
 			height: this.height,
-			rx: 5,
+			rx: 2,
 			class: 'node-rect',
 			fill: 'white',
 			stroke: lineColor,

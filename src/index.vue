@@ -48,8 +48,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.node-rect:hover {
-  fill: rgba(78, 194, 255, 0.16);
+.node-rect {
+  filter: drop-shadow(0 1px 5px  rgb(0 0 0 / 0.15));
 }
 
 .node-tools {
