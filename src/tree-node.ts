@@ -1,4 +1,5 @@
 import { makeSVG } from './utils'
+import type { TreeNodeT } from './type'
 
 const lineColor = '#4ec2ff';               // 线条颜色
 const lineWidth = 2;                       // 线条宽度
@@ -15,28 +16,7 @@ const lineHeight = 10;                     // 文字行间距
 const letterSpacing = 3;                   // 文字字符间距
 const toolsHeight = 30
 
-interface TreeNodeT {
-  line: number
-  line2: number
-  marginSize: number
-
-  xStart: number
-  yStart: number 
-
-	direction: 'horizontal' | 'vertical';               // 文字排列方向  horizontal:水平   vertical:垂直
-	treeDirection: 'horizontal' | 'vertical';          // 方向  horizontal:水平   vertical:垂直
-
-	nodeText: Array<any>                         // 节点主文本 有换行的情况，需要分段显示
-	width: number                              // 节点最终宽度
-	height: number                             // 节点最终高度
-	middle: number
-	verticalMiddle: number
-
-	prevNode: any                       // 前一个兄弟节点
-	parentNode: any
-}
-
-class TreeNode {
+export class TreeNode {
   name?: string
   level?: number
   children?: any[]

@@ -1,10 +1,4 @@
-export interface Data {
-  id: string | number
-  name?: string
-  parent_id?: string | number
-  level?: number
-  children?: Array<Data>
-}
+import type { Data } from '../type'
 
 export const transformData2Tree = (data: Array<Data>): Array<Data> => {
   let treeData = JSON.parse(JSON.stringify(data))
