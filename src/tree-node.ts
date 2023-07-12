@@ -42,7 +42,7 @@ export class TreeNode {
   toolsHandle?: () => void;
 
   constructor(props: any = {}) {
-    for (let k in props) (this as any)[k] = props[k]
+    for (const k in props) (this as any)[k] = props[k]
 
     this.setNodeText()
   }
@@ -51,17 +51,17 @@ export class TreeNode {
   setNodeText() {
     if (!this.name) return
 
-		let name = `${this.name}`
+		const name = `${this.name}`
 
 		let nodeText: string[] = []
     let w, h
     const isHor = this.direction === 'horizontal' // 文字水平排列
 
-		let compareLength = name.length
-		let maxWords = ((isHor ? maxWidth : maxHeight) - paddingSize) / (fontSize + letterSpacing) - 1  // 一行或一竖最多可显示字数
+		const compareLength = name.length
+		const maxWords = ((isHor ? maxWidth : maxHeight) - paddingSize) / (fontSize + letterSpacing) - 1  // 一行或一竖最多可显示字数
 
 		if (compareLength > maxWords) {
-			let lines = Math.ceil(compareLength / maxWords)
+			const lines = Math.ceil(compareLength / maxWords)
 			if (isHor) {
 				w = maxWidth
 				h = lines * (fontSize + lineHeight) + paddingSize + fontSize
@@ -71,7 +71,7 @@ export class TreeNode {
 			}
 
 			nodeText = []
-			let func = (str: string) => {
+			const func = (str: string) => {
 				if (!str) return
 				nodeText.push(str.substring(0, maxWords))
 				func(str.substring(maxWords))
@@ -115,11 +115,11 @@ export class TreeNode {
 
   // 节点文字
   createText() {
-    let startY = this.yStart + paddingSize + fontSize
-		let startX = this.xStart + fontSize
-		let textGroup = makeSVG('g',)
+    const startY = this.yStart + paddingSize + fontSize
+		const startX = this.xStart + fontSize
+		const textGroup = makeSVG('g',)
 
-		let setAttrs = (i: number): Record<string, string | number> => {
+		const setAttrs = (i: number): Record<string, string | number> => {
 			return this.direction === 'horizontal' ?
 				{
 					x: startX,
@@ -134,7 +134,7 @@ export class TreeNode {
 		}
 
 		if (this.nodeText.length === 1) {
-			let text = makeSVG('text', {
+			const text = makeSVG('text', {
 				fill: 'black',
 				stroke: 'none',
 				'font-size': fontSize,
@@ -147,8 +147,8 @@ export class TreeNode {
 			text.innerHTML = this.nodeText[0]
 			textGroup.appendChild(text)
 		} else {
-			for (let i in this.nodeText) {
-				let text = makeSVG('text', {
+			for (const i in this.nodeText) {
+				const text = makeSVG('text', {
 					fill: 'black',
 					stroke: 'none',
 					'font-size': fontSize,
@@ -165,7 +165,7 @@ export class TreeNode {
 
   // 节点操作按钮
   createTools() {
-    let tools = makeSVG('text', {
+    const tools = makeSVG('text', {
 			x: this.middle,
 			y: this.yStart + this.height - 10,
 			fill: 'black',
@@ -175,8 +175,8 @@ export class TreeNode {
 			'dominant-baseline': "middle",
 		})
 
-		let createBtn = (type: 'add' | 'edit' | 'del') => {
-			let btn = makeSVG('tspan', {
+		const createBtn = (type: 'add' | 'edit' | 'del') => {
+			const btn = makeSVG('tspan', {
 				fill: { 'add': '#4ec2ff', 'edit': '#5fb878', 'del': '#ff5722' }[type],
 				class: 'node-tools-item'
 			})
@@ -196,15 +196,15 @@ export class TreeNode {
 
   // 父子节点连接线
   createLine() {
-		let lines = makeSVG('g', {
+		const lines = makeSVG('g', {
 			close: 'open'  // 折叠节点使用
 		})
 
-		let parent = this.parentNode
+		const parent = this.parentNode
 		if (parent) {
-			let startYParent = parent.yStart + parent.height + line1
-			let verticalStartParent = this.xStart - line2
-			let lineDth = this.treeDirection === 'vertical'
+			const startYParent = parent.yStart + parent.height + line1
+			const verticalStartParent = this.xStart - line2
+			const lineDth = this.treeDirection === 'vertical'
 				? `M ${verticalStartParent} ${this.verticalMiddle} L ${this.xStart} ${this.verticalMiddle} z`
 				: `M ${this.middle} ${startYParent} L ${this.middle} ${this.yStart} z`
 
@@ -219,16 +219,16 @@ export class TreeNode {
 			// 折叠节点下方的横线：向左画（第一个节点不需要画）    横线
 			// 寻找前一个节点
 			// console.log(this.prevNode)
-			let prev = this.prevNode
+			const prev = this.prevNode
 			if (prev) {
-				let start = this.treeDirection === 'vertical'
+				const start = this.treeDirection === 'vertical'
 					? `${verticalStartParent} ${prev.verticalMiddle}`
 					: `${prev.middle} ${startYParent}`
-				let end = this.treeDirection === 'vertical'
+				const end = this.treeDirection === 'vertical'
 					? `${verticalStartParent} ${this.verticalMiddle}`
 					: `${this.middle} ${startYParent}`
 
-				let lineChilds = makeSVG('path', {
+				const lineChilds = makeSVG('path', {
 					d: `M ${start} L ${end} z`,
 					stroke: lineColor,
 					'stroke-width': lineWidth,
@@ -241,9 +241,9 @@ export class TreeNode {
 
 		if (!this.children || this.children.length <= 0) return lines
 
-		let startY = this.yStart + this.height + line1
-		let verticalStartY = this.xStart + this.width + line1
-		let linesDth = this.treeDirection === 'vertical'
+		const startY = this.yStart + this.height + line1
+		const verticalStartY = this.xStart + this.width + line1
+		const linesDth = this.treeDirection === 'vertical'
 			? `M ${this.xStart + this.width} ${this.verticalMiddle} L ${verticalStartY} ${this.verticalMiddle} z`
 			: `M ${this.middle} ${this.yStart + this.height} L ${this.middle} ${startY} z`
 
@@ -256,7 +256,7 @@ export class TreeNode {
 		}))
 
 		// 添加一个折叠节点
-		let collapse = makeSVG('circle', {
+		const collapse = makeSVG('circle', {
 			cx: this.treeDirection === 'vertical' ? verticalStartY : this.middle,
 			cy: this.treeDirection === 'vertical' ? this.verticalMiddle : startY,
 			r: collapseSize,
@@ -265,7 +265,7 @@ export class TreeNode {
 			'stroke-width': 1,
 			style: 'cursor: pointer',
 		})
-		let iconText = makeSVG('text', {
+		const iconText = makeSVG('text', {
 			x: this.treeDirection === 'vertical' ? verticalStartY : this.middle,
 			y: this.treeDirection === 'vertical' ? this.verticalMiddle : startY,
 			'font-size': 12,
@@ -276,8 +276,8 @@ export class TreeNode {
 		})
 		iconText.innerHTML = '-'
 
-		let clickFunc = function () {
-			let close = lines.getAttribute('close') === 'close',
+		const clickFunc = function () {
+			const close = lines.getAttribute('close') === 'close',
 				brother = lines.parentNode?.childNodes
 
 			lines.setAttribute('close', close ? 'open' : 'close')

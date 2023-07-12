@@ -1,24 +1,37 @@
 <template>
   <div>
-    <button>
-      click me
+    <button @click="handleClick">
+      转换方向
     </button>
-    <CustomButton text="测试" />
+    <svg-tree-org :data="data" :direction="direction" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api'
-import CustomButton from '../src/index.vue'
-import { transformData2Tree } from '../src/utils/index'
-import { originData } from '../src/data/index'
+import { defineComponent, ref } from '@vue/composition-api'
+import SvgTreeOrg from '../src/index.vue'
+import { originData } from './data/index'
 
 export default defineComponent({
   components: {
-    CustomButton,
+    SvgTreeOrg,
   },
   setup() {
-    console.log(transformData2Tree(originData))
+    const direction = ref('vertical')
+    const data = ref(originData)
+    const handleClick = () => {
+      if (direction.value === 'vertical') {
+        direction.value = 'horizontal'
+      } else {
+        direction.value = 'vertical'
+      }
+    }
+
+    return {
+      data,
+      direction,
+      handleClick
+    }
   }
 })
 </script>

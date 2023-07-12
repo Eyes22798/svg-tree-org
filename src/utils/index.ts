@@ -44,7 +44,7 @@ export const makeSVG = (tag: string, attrs: Record<string, string | number> = {}
     el.setAttribute('draggable', 'true');
   }
   // 动态插入 svg 子元素
-  for (let k in attrs) {
+  for (const k in attrs) {
     k === 'xlink:href' ? el.setAttributeNS(xlinkns, k, attrs[k] as string) : el.setAttribute(k, attrs[k] as string);
   }
 

@@ -38,9 +38,9 @@ export interface Node extends Data {
 
 export interface DrawT {
   hasCreated?: boolean
-  data?: Array<Data>
-  direction?: 'horizontal' | 'vertical'
-  $box?: HTMLElement
+  data: Array<Data>
+  direction: 'horizontal' | 'vertical'
+  $box: HTMLElement | Element | null
   $svg?: SVGElement
   toolsHandle?: () => void
 }
