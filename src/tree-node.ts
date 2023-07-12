@@ -1,5 +1,5 @@
 import { makeSVG } from './utils'
-import type { TreeNodeT } from './type'
+import type { Node } from './type'
 
 const lineColor = '#4ec2ff';               // 线条颜色
 const lineWidth = 2;                       // 线条宽度
@@ -17,29 +17,31 @@ const letterSpacing = 3;                   // 文字字符间距
 const toolsHeight = 30
 
 export class TreeNode {
+	id!: number | string
   name?: string
-  level?: number
-  children?: any[]
-  line = line1
+  level!: number
+  children?: Array<Node>
+  line1 = line1
   line2 = line2
   marginSize = marginSize
 
-  xStart: number = 0                      // x 坐标
-  yStart: number = 0                      // y 坐标
+  xStart!: number                      		// x 坐标
+  yStart!: number                    			// y 坐标
 
-	direction = 'horizontal';               // 文字排列方向  horizontal:水平   vertical:垂直
-	treeDirection = 'horizontal';           // 方向  horizontal:水平   vertical:垂直
+	direction: 'horizontal' | 'vertical' = 'horizontal';               // 文字排列方向  horizontal:水平   vertical:垂直
+	treeDirection: 'horizontal' | 'vertical' = 'horizontal';           // 方向  horizontal:水平   vertical:垂直
 
-	nodeText: string[] = [];                          // 节点主文本 有换行的情况，需要分段显示
-	width = 0;                              // 节点最终宽度
-	height = 0;                             // 节点最终高度
-	middle = 0;
-	verticalMiddle = 0;
+	nodeText: string[] = [];                // 节点主文本 有换行的情况，需要分段显示
+	width!: number                          // 节点最终宽度
+	height!: number                         // 节点最终高度
+	middle!: number
+	verticalMiddle!: number
 
-	prevNode?: TreeNodeT;                        // 前一个兄弟节点
-	parentNode?: TreeNodeT;                      // 父节点
+	prevNode?: Node;                        // 前一个兄弟节点
+	parentNode?: Node;                      // 父节点
+  toolsHandle?: () => void;
 
-  constructor(props: Record<string, string> = {}) {
+  constructor(props: any = {}) {
     for (let k in props) (this as any)[k] = props[k]
 
     this.setNodeText()
