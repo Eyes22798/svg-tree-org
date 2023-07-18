@@ -41,9 +41,10 @@
   "dependencies": {
     "@vue/composition-api": "^1.7.1",
     "core-js": "^3.8.3",
+    "lodash.clonedeep": "^4.5.0",
     "vue": "~2.6.14"
   },
-  "devDependencies": { 
+  "devDependencies": {
     "@babel/preset-typescript": "^7.18.6",
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",

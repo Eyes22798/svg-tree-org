@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api'
-import SvgTreeOrg from '../src/index.vue'
+import SvgTreeOrg from '../src/tree.vue'
 import { originData } from './data/index'
 
 export default defineComponent({

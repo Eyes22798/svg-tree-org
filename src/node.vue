@@ -15,21 +15,25 @@
           :letter-spacing="letterSpacing"
           text-anchor="middle" dominant-baseline="middle"
           :x="middle"
-          :y="starY"
+          :y="startY"
         >{{ nodeText[0] }}</text>
       </g>
 
       <tree-node
-        v-for="child in node.children"
+        v-for="child in childNodes"
+        :node="child"
+        :treeDirection="child.treeDirection"
         :key="child.id"
+        :style="{ display: node.close ? 'none' : '' }"
       >
       </tree-node>
-      <g id="node-line" :close="node.close" :style="{ display: node.close ? 'none' : '' }">
+      <g id="node-line" :close="String(node.close)">
         <path v-if="node.parentNode" key="line2" :d="line2Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
         <path v-if="node.parentNode && node.prevNode" key="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
-        <path key="lineChild" :d="linesChildDth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
+        <path v-if="node.children && node.children.length > 0" key="lineChild" :d="linesChildDth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
 
         <circle
+          v-if="node.children && node.children.length > 0"
           :cx="node.treeDirection === 'vertical' ? collaspeVerticalStartY : middle"
           :cy="node.treeDirection === 'vertical' ? verticalMiddle : collaspeStartY"
           :r="collapseSize"
@@ -41,6 +45,7 @@
         />
 
         <text
+          v-if="node.children && node.children.length > 0"
           :x="node.treeDirection === 'vertical' ? collaspeVerticalStartY : middle"
           :y="node.treeDirection === 'vertical' ? verticalMiddle : collaspeStartY"
           :font-size="12"
@@ -55,22 +60,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType, computed, toRefs, onMounted } from '@vue/composition-api'
-import type { Data, DrawT, Node } from './type'
+import { defineComponent, ref, PropType, computed, toRefs, onMounted, watch } from '@vue/composition-api'
+import type { Node } from './type'
 
-const lineColor = '#ddd';               	 // 线条颜色
-const lineWidth = 1;                    	 // 线条宽度
-const collapseSize = 6;                    // 折叠点圆圈尺寸
-
-const fontSize = 14;                       // 节点文本字号
 const paddingSize = 5;                     // 一个节点的padding值
-const marginSize = 40;                     // 一个节点的右边距
 const line1 = 30;                          //  父子节点间距（上方）
 const line2 = 80;                          //  父子节点间距（下方）
 const maxWidth = 200;                      // 节点矩形框最大宽度
 const maxHeight = 200;                     // 节点矩形框最大高度
 const lineHeight = 10;                     // 文字行间距
-const letterSpacing = 3;                   // 文字字符间距
 const toolsHeight = 10
 
 export default defineComponent({
@@ -78,7 +76,7 @@ export default defineComponent({
   props: {
     node: {
       type: Object as PropType<Node>,
-      default: () => []
+      default: () => ({})
     },
     collapse: {
       type: Boolean,
@@ -103,12 +101,20 @@ export default defineComponent({
     collapseSize: {
       type: Number,
       default: 6
+    },
+    treeDirection: {
+      type: String as PropType<'horizontal' | 'vertical'>,
+      default: 'horizontal'
     }
   },
   setup(props) {
     const { node, fontSize, letterSpacing } = toRefs(props)
     const middle = computed(() => node.value.xStart + node.value.width / 2) // 中间位置
     const verticalMiddle = computed(() => node.value.yStart + node.value.height / 2)
+    const childNodes = computed(() => {
+      const childs = props.node.children
+      return childs
+    })
 
     // 设置节点文本
     const nodeText = ref<Array<string>>([])
@@ -182,6 +188,8 @@ export default defineComponent({
     const collaspeVerticalStartY = ref(0)
     const createLine = () => {
       const parent = node.value.parentNode
+      node.value.middle = middle.value
+      node.value.verticalMiddle = verticalMiddle.value
       if (parent) {
         const startYParent = parent.yStart + parent.height + line1
         const verticalStartParent = node.value.xStart - line2
@@ -208,12 +216,17 @@ export default defineComponent({
       collaspeVerticalStartY.value = node.value.xStart + node.value.width + line1
       linesChildDth.value = node.value.treeDirection === 'vertical'
         ? `M ${node.value.xStart + node.value.width} ${verticalMiddle.value} L ${collaspeVerticalStartY.value} ${verticalMiddle.value} z`
-        : `M ${middle.value} ${node.value.yStart + node.value.height} L ${middle.value} ${startY} z`
+        : `M ${middle.value} ${node.value.yStart + node.value.height} L ${middle.value} ${collaspeStartY.value} z`
     }
 
     const handleCollapse = () => {
       node.value.close = !node.value.close
     }
+
+    watch(() => props.treeDirection, (val) => {
+      setNodeText()
+      createLine()
+    })
 
     onMounted(() => {
       setNodeText()
@@ -221,18 +234,19 @@ export default defineComponent({
     })
 
     return {
-      node,
       middle,
       verticalMiddle,
       startY,
       startX,
       nodeText,
       setAttrs,
+      line1Dth,
       line2Dth,
       linesChildDth,
       collaspeStartY,
       collaspeVerticalStartY,
-      handleCollapse
+      handleCollapse,
+      childNodes
     }
   }
 })

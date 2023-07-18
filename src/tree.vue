@@ -7,21 +7,22 @@
     :height="treeHeight"
     version="1.1"
   >
-    <tree-node v-for="node in treeData" :node="node" :key="node.id">
+    <tree-node v-for="node in treeData" :treeDirection="direction" :node="node" :key="node.id">
       {{ node.id }}
     </tree-node>
   </svg>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, PropType, computed } from '@vue/composition-api'
-import type { Data, DrawT, Node } from './type'
-import { makeSVG } from './utils/index'
+import { defineComponent, ref, onMounted, PropType, watch } from '@vue/composition-api'
+import type { Data, Node } from './type'
 import { TreeNode } from './tree-node'
 import treeNode from './node.vue'
+import { transformData2Tree } from './utils'
+import cloneDeep from 'lodash.clonedeep'
 
 export default defineComponent({
-  name: 'tree',
+  name: 'SvgTreeOrg',
   components: { treeNode },
   props: {
     hasCreate: {
@@ -55,13 +56,16 @@ export default defineComponent({
   },
   setup(props) {
     const treeData = ref<Array<Node>>([])
+    let currentTreeData: unknown = []
 
     const setData = (data: Array<Data>) => {
       if (!data || data.length === 0) {
         treeData.value = []
         return
       }
-      treeData.value = JSON.parse(JSON.stringify(data))  // 深拷贝原始数据
+
+      treeData.value = transformData2Tree(cloneDeep(data)) as unknown as Array<Node>  // 深拷贝原始数据
+      currentTreeData = transformData2Tree(cloneDeep(data)) as unknown as Array<Node>
     }
 
     const treeWidth = ref(0)
@@ -169,11 +173,17 @@ export default defineComponent({
         if (yStart > svgHeight && props.direction === 'vertical') svgHeight = yStart
       }
 
-      func(treeData.value as unknown as Array<Node>)
+      func(currentTreeData as unknown as Array<Node>)
+
+      treeData.value = currentTreeData as unknown as Array<Node>
 
       treeWidth.value = svgWidth + 300
       treeHeight.value = svgHeight + 300
     }
+
+    watch(() => props.direction, (val) => {
+      setAxis()
+    })
 
     onMounted(() => {
       if (props.data) {
@@ -184,6 +194,7 @@ export default defineComponent({
 
 
     return {
+      currentTreeData,
       treeData,
       treeWidth,
       treeHeight
