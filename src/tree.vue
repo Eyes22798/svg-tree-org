@@ -7,14 +7,9 @@
     :height="treeHeight"
     version="1.1"
   >
-    <g
-      v-for="node in treeData"
-      :key="node.id"
-      :collapse="collapse"
-      :id="node.id"
-    >
-
-    </g>
+    <tree-node v-for="node in treeData" :node="node" :key="node.id">
+      {{ node.id }}
+    </tree-node>
   </svg>
 </template>
 
@@ -23,8 +18,11 @@ import { defineComponent, ref, onMounted, PropType, computed } from '@vue/compos
 import type { Data, DrawT, Node } from './type'
 import { makeSVG } from './utils/index'
 import { TreeNode } from './tree-node'
+import treeNode from './node.vue'
 
 export default defineComponent({
+  name: 'tree',
+  components: { treeNode },
   props: {
     hasCreate: {
       type: Boolean,
@@ -57,11 +55,6 @@ export default defineComponent({
   },
   setup(props) {
     const treeData = ref<Array<Node>>([])
-    const rootNode = computed(() => props.data.length > 0 ? props.data[0] : { id: 'root' })
-
-    onMounted(() => {
-      if (props.data) setData(props.data)
-    })
 
     const setData = (data: Array<Data>) => {
       if (!data || data.length === 0) {
@@ -97,6 +90,7 @@ export default defineComponent({
           node.prevNode = arr[i - 1]
           node.toolsHandle = props.toolsHandle  // 操作按钮
           node.treeDirection = props.direction  // 树的方向
+          node.close = false
           arr[i] = node
 
           if (levelXStart[v.level] > xStart) xStart = levelXStart[v.level]
@@ -180,6 +174,13 @@ export default defineComponent({
       treeWidth.value = svgWidth + 300
       treeHeight.value = svgHeight + 300
     }
+
+    onMounted(() => {
+      if (props.data) {
+        setData(props.data)
+        setAxis()
+      }
+    })
 
 
     return {

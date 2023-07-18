@@ -27,6 +27,7 @@ export interface Node extends Data {
 	parentNode?: Node
   children?: Array<Node>
   level: number
+  close?: boolean
 
   toolsHandle?: () => void
   setNodeText: () => void

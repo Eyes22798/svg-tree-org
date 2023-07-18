@@ -10,7 +10,6 @@
       ></rect>
       <g>
         <text
-          v-if="node.nodeText.length === 1"
           fill="black" stroke="none"
           :font-size="fontSize"
           :letter-spacing="letterSpacing"
@@ -18,7 +17,39 @@
           :x="middle"
           :y="starY"
         >{{ nodeText[0] }}</text>
-        <text v-else></text>
+      </g>
+
+      <tree-node
+        v-for="child in node.children"
+        :key="child.id"
+      >
+      </tree-node>
+      <g id="node-line" :close="node.close" :style="{ display: node.close ? 'none' : '' }">
+        <path v-if="node.parentNode" key="line2" :d="line2Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
+        <path v-if="node.parentNode && node.prevNode" key="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
+        <path key="lineChild" :d="linesChildDth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
+
+        <circle
+          :cx="node.treeDirection === 'vertical' ? collaspeVerticalStartY : middle"
+          :cy="node.treeDirection === 'vertical' ? verticalMiddle : collaspeStartY"
+          :r="collapseSize"
+          fill="white"
+          :stroke="lineColor"
+          :stroke-width="lineWidth"
+          style="cursor: pointer"
+          @click="handleCollapse"
+        />
+
+        <text
+          :x="node.treeDirection === 'vertical' ? collaspeVerticalStartY : middle"
+          :y="node.treeDirection === 'vertical' ? verticalMiddle : collaspeStartY"
+          :font-size="12"
+          :fill="lineColor"
+          text-anchor="middle"
+          dominant-baseline="middle"
+          style="cursor: pointer"
+          @click="handleCollapse"
+        >{{ node.close ? '+' : '-' }}</text>
       </g>
     </g>
 </template>
@@ -60,16 +91,24 @@ export default defineComponent({
     letterSpacing: {
       type: Number,
       default: 3
+    },
+    lineColor: {
+      type: String,
+      default: '#ddd'
+    },
+    lineWidth: {
+      type: Number,
+      default: 1
+    },
+    collapseSize: {
+      type: Number,
+      default: 6
     }
   },
   setup(props) {
     const { node, fontSize, letterSpacing } = toRefs(props)
     const middle = computed(() => node.value.xStart + node.value.width / 2) // 中间位置
     const verticalMiddle = computed(() => node.value.yStart + node.value.height / 2)
-
-    onMounted(() => {
-      setNodeText()
-    })
 
     // 设置节点文本
     const nodeText = ref<Array<string>>([])
@@ -122,31 +161,78 @@ export default defineComponent({
     // 节点文字
     const startY = ref(node.value.yStart + paddingSize + fontSize.value)
     const startX = ref(node.value.xStart + fontSize.value)
-    const createText = () => {
-
-      const setAttrs = (i: number): Record<string, string | number> => {
-        return node.value.direction === 'horizontal' ?
-          {
-            x: startX.value,
-            y: startY.value + (fontSize.value + lineHeight) * i,
-          } :
-          {
-            x: startX.value + (fontSize.value + letterSpacing.value + 10) * i,
-            y: startY.value,
-            transform: `rotate(90, ${startX.value + (fontSize.value + letterSpacing.value + 10) * i}, ${startY})`,
-            rotate: '-90',
-          }
-      }
-
-
+    const setAttrs = (i: number): Record<string, string | number> => {
+      return node.value.direction === 'horizontal' ?
+        {
+          x: startX.value,
+          y: startY.value + (fontSize.value + lineHeight) * i,
+        } :
+        {
+          x: startX.value + (fontSize.value + letterSpacing.value + 10) * i,
+          y: startY.value,
+          transform: `rotate(90, ${startX.value + (fontSize.value + letterSpacing.value + 10) * i}, ${startY})`,
+          rotate: '-90',
+        }
     }
 
+    const line2Dth = ref('')  // 折叠节点上或者下方的竖线：line2      竖线
+    const line1Dth = ref('')  // 折叠节点下方的横线：向左画（第一个节点不需要画）    横线
+    const linesChildDth = ref('')  // 与子节点的第一段连线
+    const collaspeStartY = ref(0)
+    const collaspeVerticalStartY = ref(0)
+    const createLine = () => {
+      const parent = node.value.parentNode
+      if (parent) {
+        const startYParent = parent.yStart + parent.height + line1
+        const verticalStartParent = node.value.xStart - line2
+        line2Dth.value = node.value.treeDirection === 'vertical'
+          ? `M ${verticalStartParent} ${verticalMiddle.value} L ${node.value.xStart} ${verticalMiddle.value} z`
+          : `M ${middle.value} ${startYParent} L ${middle.value} ${node.value.yStart} z`
+
+        // 寻找前一个节点
+        const prev = node.value.prevNode
+        if (prev) {
+          const start = node.value.treeDirection === 'vertical'
+            ? `${verticalStartParent} ${prev.verticalMiddle}`
+            : `${prev.middle} ${startYParent}`
+          const end = node.value.treeDirection === 'vertical'
+            ? `${verticalStartParent} ${verticalMiddle.value}`
+            : `${middle.value} ${startYParent}`
+          line1Dth.value = `M ${start} L ${end} z`
+        }
+      }
+
+      if (!node.value.children || node.value.children.length <= 0) return
+
+      collaspeStartY.value = node.value.yStart + node.value.height + line1
+      collaspeVerticalStartY.value = node.value.xStart + node.value.width + line1
+      linesChildDth.value = node.value.treeDirection === 'vertical'
+        ? `M ${node.value.xStart + node.value.width} ${verticalMiddle.value} L ${collaspeVerticalStartY.value} ${verticalMiddle.value} z`
+        : `M ${middle.value} ${node.value.yStart + node.value.height} L ${middle.value} ${startY} z`
+    }
+
+    const handleCollapse = () => {
+      node.value.close = !node.value.close
+    }
+
+    onMounted(() => {
+      setNodeText()
+      createLine()
+    })
+
     return {
+      node,
       middle,
       verticalMiddle,
       startY,
       startX,
       nodeText,
+      setAttrs,
+      line2Dth,
+      linesChildDth,
+      collaspeStartY,
+      collaspeVerticalStartY,
+      handleCollapse
     }
   }
 })

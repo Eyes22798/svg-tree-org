@@ -36,6 +36,7 @@ export class TreeNode {
 	height!: number                         // 节点最终高度
 	middle!: number
 	verticalMiddle!: number
+	close?: boolean
 
 	prevNode?: Node;                        // 前一个兄弟节点
 	parentNode?: Node;                      // 父节点
@@ -211,6 +212,7 @@ export class TreeNode {
 			lines.appendChild(makeSVG('path', {
 				d: lineDth,
 				fill: 'none',
+        key: 'line2',
 				stroke: lineColor,
 				'stroke-width': lineWidth,
 			}))
@@ -230,6 +232,7 @@ export class TreeNode {
 				const lineChilds = makeSVG('path', {
 					d: `M ${start} L ${end} z`,
 					stroke: lineColor,
+          key: 'line1',
 					'stroke-width': lineWidth,
 					fill: 'none',
 				})
@@ -251,6 +254,7 @@ export class TreeNode {
 			d: linesDth,
 			stroke: lineColor,
 			'stroke-width': lineWidth,
+      key: 'lineChild',
 			fill: 'none'
 		}))
 
