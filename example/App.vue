@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="handleClick">
+    <button @click="handleClick" style="display: block;">
       转换方向
     </button>
     <svg-tree-org :data="data" :direction="direction" />

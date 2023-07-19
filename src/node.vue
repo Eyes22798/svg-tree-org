@@ -165,8 +165,8 @@ export default defineComponent({
     }
 
     // 节点文字
-    const startY = ref(node.value.yStart + paddingSize + fontSize.value)
-    const startX = ref(node.value.xStart + fontSize.value)
+    const startY = computed(() => node.value.yStart + paddingSize + fontSize.value)
+    const startX = computed(() => node.value.xStart + fontSize.value)
     const setAttrs = (i: number): Record<string, string | number> => {
       return node.value.direction === 'horizontal' ?
         {
