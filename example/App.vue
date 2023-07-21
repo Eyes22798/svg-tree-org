@@ -3,7 +3,14 @@
     <button @click="handleClick" style="display: block;">
       转换方向
     </button>
-    <svg-tree-org :data="data" :direction="direction" lineColor="rgba(17, 93, 219, .5)" :lineArrow="lineArrow" :lineCircle="lineCircle" :collapsable="false">
+    <svg-tree-org
+      :data="data"
+      :direction="direction"
+      lineColor="rgba(17, 93, 219, .5)"
+      :lineArrow="lineArrow"
+      :lineCircle="lineCircle"
+      :collapsable="false"
+    >
       <template #node="slotProps">
         <div style="width: 100%;height: 100%;text-align: center;">
           <img style="width: 56px;" src="./img/terminal.png" alt="">

@@ -6,3 +6,5 @@
 Features:
 + Expand and shrink
 + switch direction
++ custom node by slot
++ custom line
