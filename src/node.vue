@@ -30,6 +30,9 @@
         :key="child.id"
         :lineColor="lineColor"
         :hasSlot="hasSlot"
+        :lineArrow="lineArrow"
+        :lineCircle="lineCircle"
+        :collapsable="collapsable"
         :style="{ display: node.close ? 'none' : '' }"
       >
         <template #node="slotProps">
@@ -37,12 +40,22 @@
         </template>
       </tree-node>
       <g id="node-line" :close="String(node.close)">
-        <path v-if="node.parentNode" key="line2" :d="line2Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
-        <path v-if="node.parentNode && node.prevNode" key="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
-        <path v-if="node.children && node.children.length > 0" key="lineChild" :d="linesChildDth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
+        <defs>
+          <marker v-if="lineArrow.open" id="triangleMarker" markerUnits="strokeWidth" :markerWidth="lineArrow.markerWidth" :markerHeight="lineArrow.markerHeight" :refX="lineArrow.refX" :refY="lineArrow.refY" orient="auto">
+            <path :stroke="lineColor" :fill="lineColor" :d="`M 0 0 L ${lineArrow.markerWidth } ${lineArrow.markerHeight / 2} L 0 ${lineArrow.markerHeight} z`" />
+          </marker>
+        </defs>
+        <defs>
+          <marker v-if="lineCircle.open" id="circleMarker" :markerWidth="lineCircle.markerWidth" :markerHeight="lineCircle.markerHeight" :refX="lineCircle.refX" :refY="lineCircle.refY" orient="auto" markerUnits="userSpaceOnUse">
+            <circle :cx="lineCircle.markerWidth / 2" :cy="lineCircle.markerHeight / 2" :r="lineCircle.r" fill="none" :stroke="lineColor" :stroke-width="lineCircle.strokeWidth" />
+          </marker>
+        </defs>
+        <path v-if="node.parentNode" class="line2" :d="line2Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" style="marker-end: url(#triangleMarker);" />
+        <path v-if="node.parentNode && node.prevNode" class="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
+        <path v-if="node.children && node.children.length > 0" class="lineChild" :d="linesChildDth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" style="marker-start: url(#circleMarker);" />
 
         <circle
-          v-if="node.children && node.children.length > 0"
+          v-if="node.children && node.children.length > 0 && collapsable"
           :cx="node.treeDirection === 'vertical' ? collaspeVerticalStartY : middle"
           :cy="node.treeDirection === 'vertical' ? verticalMiddle : collaspeStartY"
           :r="collapseSize"
@@ -54,7 +67,7 @@
         />
 
         <text
-          v-if="node.children && node.children.length > 0"
+          v-if="node.children && node.children.length > 0 && collapsable"
           :x="node.treeDirection === 'vertical' ? collaspeVerticalStartY : middle"
           :y="node.treeDirection === 'vertical' ? verticalMiddle : collaspeStartY"
           :font-size="12"
@@ -106,6 +119,34 @@ export default defineComponent({
     lineWidth: {
       type: Number,
       default: 1
+    },
+    lineArrow: {
+      type: Object,
+      default: () => ({
+        open: false,
+        markerWidth: 5,
+        markerHeight: 8,
+        refX: 0,
+        refY: 4,
+        margin: 5
+      })
+    },
+    lineCircle: {
+      type: Object,
+      default: () => ({
+        open: false,
+        markerWidth: 8,
+        markerHeight: 8,
+        refX: 0,
+        refY: 4,
+        r: 3,
+        strokeWidth: 2,
+        margin: 4
+      })
+    },
+    collapsable: {
+      type: Boolean,
+      default: true
     },
     collapseSize: {
       type: Number,
@@ -206,9 +247,10 @@ export default defineComponent({
       if (parent) {
         const startYParent = parent.yStart + parent.height + line1
         const verticalStartParent = node.value.xStart - line2
+        const lineArrowMargin = props.lineArrow.open ? (props.lineArrow.markerWidth + props.lineArrow.margin) : 0
         line2Dth.value = node.value.treeDirection === 'vertical'
-          ? `M ${verticalStartParent} ${verticalMiddle.value} L ${node.value.xStart} ${verticalMiddle.value} z`
-          : `M ${middle.value} ${startYParent} L ${middle.value} ${node.value.yStart} z`
+          ? `M ${verticalStartParent} ${verticalMiddle.value} L ${node.value.xStart - lineArrowMargin} ${verticalMiddle.value} ${props.lineArrow.open ? '' : 'z'}` // 如果line右箭头不闭合当前路径
+          : `M ${middle.value} ${startYParent} L ${middle.value} ${node.value.yStart - lineArrowMargin} ${props.lineArrow.open ? '' : 'z'}`
 
         // 寻找前一个节点
         const prev = node.value.prevNode
@@ -227,9 +269,10 @@ export default defineComponent({
 
       collaspeStartY.value = node.value.yStart + node.value.height + line1
       collaspeVerticalStartY.value = node.value.xStart + node.value.width + line1
+      const lineCircleMargin = props.lineCircle.open ? props.lineCircle.markerWidth + props.lineCircle.margin : 0
       linesChildDth.value = node.value.treeDirection === 'vertical'
-        ? `M ${node.value.xStart + node.value.width} ${verticalMiddle.value} L ${collaspeVerticalStartY.value} ${verticalMiddle.value} z`
-        : `M ${middle.value} ${node.value.yStart + node.value.height} L ${middle.value} ${collaspeStartY.value} z`
+        ? `M ${node.value.xStart + node.value.width + lineCircleMargin} ${verticalMiddle.value} L ${collaspeVerticalStartY.value} ${verticalMiddle.value} z`
+        : `M ${middle.value} ${node.value.yStart + node.value.height + lineCircleMargin} L ${middle.value} ${collaspeStartY.value} z`
     }
 
     const handleCollapse = () => {

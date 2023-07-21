@@ -3,13 +3,13 @@
     <button @click="handleClick" style="display: block;">
       转换方向
     </button>
-    <svg-tree-org :data="data" :direction="direction">
-      <!-- <template #node="slotProps">
+    <svg-tree-org :data="data" :direction="direction" lineColor="rgba(17, 93, 219, .5)" :lineArrow="lineArrow" :lineCircle="lineCircle" :collapsable="false">
+      <template #node="slotProps">
         <div style="width: 100%;height: 100%;text-align: center;">
           <img style="width: 56px;" src="./img/terminal.png" alt="">
           <p style="display: block;color: #999;margin: 0;font-size: 12px;">{{ slotProps.node.id }}Desktop</p>
         </div>
-      </template> -->
+      </template>
     </svg-tree-org>
   </div>
 </template>
@@ -34,7 +34,29 @@ export default defineComponent({
       }
     }
 
+    const lineArrow = ref({
+      open: true,
+      markerWidth: 5,
+      markerHeight: 8,
+      refX: 0,
+      refY: 4,
+      margin: 0
+    })
+
+    const lineCircle = ref({
+      open: true,
+      markerWidth: 8,
+      markerHeight: 8,
+      refX: 4,
+      refY: 0,
+      r: 3,
+      strokeWidth: 2,
+      margin: 4
+    })
+
     return {
+      lineArrow,
+      lineCircle,
       data,
       direction,
       handleClick

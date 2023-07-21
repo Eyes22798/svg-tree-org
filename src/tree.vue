@@ -7,7 +7,17 @@
     :height="treeHeight"
     version="1.1"
   >
-    <tree-node v-for="node in treeData" :lineColor="lineColor" :treeDirection="direction" :node="node" :key="node.id" :hasSlot="$scopedSlots.node">
+    <tree-node
+      v-for="node in treeData"
+      :lineColor="lineColor"
+      :treeDirection="direction"
+      :node="node"
+      :key="node.id"
+      :hasSlot="$scopedSlots.node"
+      :lineArrow="lineArrow"
+      :lineCircle="lineCircle"
+      :collapsable="collapsable"
+    >
       <template #node="slotProps">
         <slot name="node" :node="slotProps.node" />
       </template>
@@ -39,7 +49,7 @@ export default defineComponent({
       type: String as PropType<'horizontal' | 'vertical'>,
       default: 'horizontal'
     },
-    collapse: {
+    collapsable: {
       type: Boolean,
       default: true
     },
@@ -58,7 +68,31 @@ export default defineComponent({
     lineColor: {
       type: String,
       default: '#ddd'
-    }
+    },
+    lineArrow: {
+      type: Object,
+      default: () => ({
+        open: false,
+        markerWidth: 5,
+        markerHeight: 8,
+        refX: 0,
+        refY: 4,
+        margin: 0
+      })
+    },
+    lineCircle: {
+      type: Object,
+      default: () => ({
+        open: false,
+        markerWidth: 8,
+        markerHeight: 8,
+        refX: 0,
+        refY: 4,
+        r: 3,
+        strokeWidth: 2,
+        margin: 4
+      })
+    },
   },
   setup(props) {
     const treeData = ref<Array<Node>>([])
