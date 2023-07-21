@@ -3,12 +3,16 @@
       :collapse="collapse"
       :id="node.id"
     >
+      <foreignObject v-if="$scopedSlots.node" :x="node.xStart" :y="node.yStart" :width="node.width" :height="node.height">
+        <slot name="node" :node="node"></slot>
+      </foreignObject>
       <rect
+        v-if="!hasSlot"
         :x="node.xStart" :y="node.yStart" :width="node.width" :height="node.height" rx="2"
         class="node-rect"
         fill="white" stroke="#ddd" stroke-width="1"
       ></rect>
-      <g>
+      <g v-if="!hasSlot">
         <text
           fill="black" stroke="none"
           :font-size="fontSize"
@@ -24,8 +28,13 @@
         :node="child"
         :treeDirection="child.treeDirection"
         :key="child.id"
+        :lineColor="lineColor"
+        :hasSlot="hasSlot"
         :style="{ display: node.close ? 'none' : '' }"
       >
+        <template #node="slotProps">
+          <slot name="node" :node="slotProps.node"></slot>
+        </template>
       </tree-node>
       <g id="node-line" :close="String(node.close)">
         <path v-if="node.parentNode" key="line2" :d="line2Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
@@ -105,6 +114,10 @@ export default defineComponent({
     treeDirection: {
       type: String as PropType<'horizontal' | 'vertical'>,
       default: 'horizontal'
+    },
+    hasSlot: {
+      type: [Boolean, Function],
+      default: false
     }
   },
   setup(props) {

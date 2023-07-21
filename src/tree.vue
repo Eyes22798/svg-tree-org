@@ -7,8 +7,10 @@
     :height="treeHeight"
     version="1.1"
   >
-    <tree-node v-for="node in treeData" :treeDirection="direction" :node="node" :key="node.id">
-      {{ node.id }}
+    <tree-node v-for="node in treeData" :lineColor="lineColor" :treeDirection="direction" :node="node" :key="node.id" :hasSlot="$scopedSlots.node">
+      <template #node="slotProps">
+        <slot name="node" :node="slotProps.node" />
+      </template>
     </tree-node>
   </svg>
 </template>
@@ -52,6 +54,10 @@ export default defineComponent({
     toolsHandle:{
       type: Function,
       default: () => (null)
+    },
+    lineColor: {
+      type: String,
+      default: '#ddd'
     }
   },
   setup(props) {
