@@ -238,6 +238,7 @@ export default defineComponent({
       viewBox.value = `0 0 ${treeWidth.value} ${treeHeight.value}`
     }
 
+    // 缩放功能
     const zoom = (e: WheelEvent) => {
       let startViewBox = viewBox.value.split(' ').map( n => parseFloat(n))
       let startClient = {
@@ -280,6 +281,8 @@ export default defineComponent({
       let middleViewBox = viewBox.value.split(' ').map(n => parseFloat(n))
       let moveBackViewBox = `${middleViewBox[0] + delta.dx} ${middleViewBox[1] + delta.dy} ${middleViewBox[2]} ${middleViewBox[3]}`
       viewBox.value = moveBackViewBox
+
+      emit('zoom', e, viewBox.value)
     }
 
     watch(() => props.direction, (val) => {

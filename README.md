@@ -8,3 +8,4 @@ Features:
 + switch direction
 + custom node by slot
 + custom line
++ zoom
