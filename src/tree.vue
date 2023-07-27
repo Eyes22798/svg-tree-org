@@ -1,32 +1,37 @@
 <template>
-  <svg
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    draggable="true"
-    class="radial-progress-bar"
-    :width="treeWidth"
-    :height="treeHeight"
-    version="1.1"
-  >
-    <tree-node
-      v-for="node in treeData"
-      :lineColor="lineColor"
-      :treeDirection="direction"
-      :node="node"
-      :key="node.id"
-      :hasSlot="$scopedSlots.node"
-      :lineArrow="lineArrow"
-      :lineCircle="lineCircle"
-      :collapsable="collapsable"
+  <div ref="treeBox" class="tree-box" @wheel="zoom">
+    <svg
+      ref="svgRef"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      draggable="true"
+      :width="treeWidth"
+      :height="treeHeight"
+      :viewBox="viewBox"
+      version="1.1"
+      style="display: block; margin: auto;"
     >
-      <template #node="slotProps">
-        <slot name="node" :node="slotProps.node" />
-      </template>
-    </tree-node>
-  </svg>
+      <tree-node
+        v-for="node in treeData"
+        :lineColor="lineColor"
+        :treeDirection="direction"
+        :node="node"
+        :key="node.id"
+        :hasSlot="$scopedSlots.node"
+        :lineArrow="lineArrow"
+        :lineCircle="lineCircle"
+        :collapsable="collapsable"
+      >
+        <template #node="slotProps">
+          <slot name="node" :node="slotProps.node" />
+        </template>
+      </tree-node>
+    </svg>
+  </div>
+
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, PropType, watch } from '@vue/composition-api'
+import { defineComponent, ref, onMounted, PropType, watch, computed } from '@vue/composition-api'
 import type { Data, Node } from './type'
 import { TreeNode } from './tree-node'
 import treeNode from './node.vue'
@@ -93,8 +98,14 @@ export default defineComponent({
         margin: 4
       })
     },
+    zoomable: {
+      type: Boolean,
+      default: true
+    }
   },
-  setup(props) {
+  setup(props, { emit }) {
+    const svgRef = ref<SVGSVGElement | null>(null)
+    const treeBox = ref<HTMLElement | null>(null)
     const treeData = ref<Array<Node>>([])
     let currentTreeData: unknown = []
 
@@ -110,15 +121,16 @@ export default defineComponent({
 
     const treeWidth = ref(0)
     const treeHeight = ref(0)
+    const viewBox = ref('0 0 0 0')
     // 设置节点坐标和svg宽高
     const setAxis = () => {
       const levelXStart: Record<number, number> = {},  // 寻找同级节点的离当前线最近的x坐标，防止节点重叠
 			levelYStart: Record<number, number> = {}
 
-      let xStart = 100,
+      let xStart = 0,
         svgWidth = 0,
         svgHeight = 0
-      let yStart = props.direction === 'vertical' ? 100 : 0
+      let yStart = props.direction === 'vertical' ? 0 : 0
 
       const func = (arr: Array<Node>, parent?: Node) => {
         if (!arr || arr.length <= 0) return
@@ -217,8 +229,57 @@ export default defineComponent({
 
       treeData.value = currentTreeData as unknown as Array<Node>
 
-      treeWidth.value = svgWidth + 300
-      treeHeight.value = svgHeight + 300
+      const boxWidth = treeBox.value && window.getComputedStyle(treeBox.value).width
+      const boxHeight = treeBox.value && window.getComputedStyle(treeBox.value).height
+
+      treeWidth.value = Number(boxWidth?.split('px')[0])
+      treeHeight.value = Number(boxHeight?.split('px')[0])
+
+      viewBox.value = `0 0 ${treeWidth.value} ${treeHeight.value}`
+    }
+
+    const zoom = (e: WheelEvent) => {
+      let startViewBox = viewBox.value.split(' ').map( n => parseFloat(n))
+      let startClient = {
+        x: e.clientX,
+        y: e.clientY
+      }
+
+      // 将client坐标转换为svg坐标
+      let newSVGPoint = svgRef.value?.createSVGPoint()
+      let CTM = svgRef.value?.getScreenCTM()
+      if (newSVGPoint) {
+        newSVGPoint.x = startClient.x
+        newSVGPoint.y = startClient.y
+      }
+
+      let startSVGPoint = newSVGPoint?.matrixTransform(CTM?.inverse()) // 转换后的svg坐标
+
+      // 设置缩放
+      let r
+      if (e.deltaY > 0) {
+        r = 0.9
+      } else if (e.deltaY < 0) {
+        r = 1.1
+      } else {
+        r = 1
+      }
+      viewBox.value = `${startViewBox[0]} ${startViewBox[1]} ${startViewBox[2] * r} ${startViewBox[3] * r}`
+
+      //	将一开始的 viewPort Client 利用新的 CTM 转换为新的svg坐标
+      CTM = svgRef.value?.getScreenCTM()
+      let moveToSVGPoint = newSVGPoint?.matrixTransform(CTM?.inverse())
+
+      //	计算偏移量
+      let delta = {
+        dx: startSVGPoint && moveToSVGPoint ? startSVGPoint.x - moveToSVGPoint.x : 0,
+        dy: startSVGPoint && moveToSVGPoint ? startSVGPoint.y - moveToSVGPoint.y : 0
+      }
+
+      // 设置最终viewport位置
+      let middleViewBox = viewBox.value.split(' ').map(n => parseFloat(n))
+      let moveBackViewBox = `${middleViewBox[0] + delta.dx} ${middleViewBox[1] + delta.dy} ${middleViewBox[2]} ${middleViewBox[3]}`
+      viewBox.value = moveBackViewBox
     }
 
     watch(() => props.direction, (val) => {
@@ -232,17 +293,24 @@ export default defineComponent({
       }
     })
 
-
     return {
+      svgRef,
+      treeBox,
+      viewBox,
       currentTreeData,
       treeData,
       treeWidth,
-      treeHeight
+      treeHeight,
+      zoom
     }
   }
 })
 </script>
 
 <style lang="scss">
-
+.tree-box {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 </style>
