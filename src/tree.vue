@@ -1,5 +1,12 @@
 <template>
-  <div ref="treeBox" class="tree-box" @wheel="zoom">
+  <div
+    ref="treeBox"
+    class="tree-box"
+    @wheel="zoom"
+    @mousedown="mousedown"
+    @mouseup="mouseup"
+    @mousemove="drag"
+  >
     <svg
       ref="svgRef"
       xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -99,6 +106,10 @@ export default defineComponent({
       })
     },
     zoomable: {
+      type: Boolean,
+      default: true
+    },
+    draggable: {
       type: Boolean,
       default: true
     }
@@ -238,10 +249,10 @@ export default defineComponent({
       viewBox.value = `0 0 ${treeWidth.value} ${treeHeight.value}`
     }
 
-    // 缩放功能
-    const zoom = (e: WheelEvent) => {
-      let startViewBox = viewBox.value.split(' ').map( n => parseFloat(n))
-      let startClient = {
+    // client与svg坐标相互转换
+    const svgMatrixTransform = (e: DragEvent | WheelEvent) => {
+      const startViewBox = viewBox.value.split(' ').map(n => parseFloat(n))
+      const startClient = {
         x: e.clientX,
         y: e.clientY
       }
@@ -254,22 +265,35 @@ export default defineComponent({
         newSVGPoint.y = startClient.y
       }
 
-      let startSVGPoint = newSVGPoint?.matrixTransform(CTM?.inverse()) // 转换后的svg坐标
-
-      // 设置缩放
-      let r
-      if (e.deltaY > 0) {
-        r = 0.9
-      } else if (e.deltaY < 0) {
-        r = 1.1
-      } else {
-        r = 1
-      }
-      viewBox.value = `${startViewBox[0]} ${startViewBox[1]} ${startViewBox[2] * r} ${startViewBox[3] * r}`
+      const startSVGPoint = newSVGPoint?.matrixTransform(CTM?.inverse()) // 转换后的svg坐标
 
       //	将一开始的 viewPort Client 利用新的 CTM 转换为新的svg坐标
       CTM = svgRef.value?.getScreenCTM()
       let moveToSVGPoint = newSVGPoint?.matrixTransform(CTM?.inverse())
+
+      return {
+        startViewBox,
+        newSVGPoint,
+        CTM,
+        startSVGPoint,
+        moveToSVGPoint
+      }
+    }
+
+    // 缩放功能
+    const zoom = (e: WheelEvent) => {
+      const { startViewBox, startSVGPoint, moveToSVGPoint } = svgMatrixTransform(e)
+
+      // 设置缩放
+      let r
+      if (e.deltaY > 0) {
+        r = 1.1
+      } else if (e.deltaY < 0) {
+        r = 0.9
+      } else {
+        r = 1
+      }
+      viewBox.value = `${startViewBox[0]} ${startViewBox[1]} ${startViewBox[2] * r} ${startViewBox[3] * r}`
 
       //	计算偏移量
       let delta = {
@@ -283,6 +307,58 @@ export default defineComponent({
       viewBox.value = moveBackViewBox
 
       emit('zoom', e, viewBox.value)
+    }
+
+    const dragging = ref(false)
+    const mousedown = () => {
+      dragging.value = true
+    }
+    const mouseup = () => {
+      dragging.value = false
+    }
+
+    const drag = (e: DragEvent) => {
+      if (!dragging.value || !props.draggable) return
+      const startViewBox = viewBox.value.split(' ').map(n => parseFloat(n))
+      const startClient = {
+        x: e.clientX,
+        y: e.clientY
+      }
+
+      // 将client坐标转换为svg坐标
+      let newSVGPoint = svgRef.value?.createSVGPoint()
+      let CTM = svgRef.value?.getScreenCTM()
+      if (newSVGPoint) {
+        newSVGPoint.x = startClient.x
+        newSVGPoint.y = startClient.y
+      }
+
+      const startSVGPoint = newSVGPoint?.matrixTransform(CTM?.inverse()) // 转换后的svg坐标
+
+      let moveToClient = {
+        x: e.clientX + e.movementX,
+        y: e.clientY + e.movementY
+      }
+
+      newSVGPoint = svgRef.value?.createSVGPoint()
+      CTM = svgRef.value?.getScreenCTM()
+      if (newSVGPoint) {
+        newSVGPoint.x = moveToClient.x
+        newSVGPoint.y = moveToClient.y
+      }
+
+      let moveToSVGPoint = newSVGPoint?.matrixTransform(CTM?.inverse())
+
+      if (startSVGPoint && moveToSVGPoint) {
+        let delta = {
+          dx: startSVGPoint.x - moveToSVGPoint.x,
+          dy: startSVGPoint.y - moveToSVGPoint.y
+        }
+
+        let moveToViewBox = `${startViewBox[0] + delta.dx} ${startViewBox[1] + delta.dy} ${startViewBox[2]} ${startViewBox[3]}`
+
+        viewBox.value = moveToViewBox
+      }
     }
 
     watch(() => props.direction, (val) => {
@@ -304,7 +380,10 @@ export default defineComponent({
       treeData,
       treeWidth,
       treeHeight,
-      zoom
+      zoom,
+      drag,
+      mousedown,
+      mouseup
     }
   }
 })
