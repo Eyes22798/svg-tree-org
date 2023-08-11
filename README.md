@@ -10,3 +10,4 @@ Features:
 + custom node by slot
 + custom line
 + zoom
++ drag
