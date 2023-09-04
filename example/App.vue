@@ -33,7 +33,7 @@ export default defineComponent({
     SvgTreeOrg,
   },
   setup() {
-    const direction = ref('vertical')
+    const direction = ref('horizontal')
     const data = ref(originData)
     const handleClick = () => {
       if (direction.value === 'vertical') {
