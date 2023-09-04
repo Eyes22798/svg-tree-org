@@ -246,8 +246,8 @@ export default defineComponent({
       treeWidth.value = Number(boxWidth?.split('px')[0])
       treeHeight.value = Number(boxHeight?.split('px')[0])
 
-      const xMiddle = (treeWidth.value - svgWidth) / 2
-      const yMiddle = (treeHeight.value - svgHeight) / 2
+      const xMiddle = (treeWidth.value - svgWidth) / 2 > 0 ? (treeWidth.value - svgWidth) / 2 : 0
+      const yMiddle = (treeHeight.value - svgHeight) / 2 > 0 ? (treeHeight.value - svgHeight) / 2 : 0
       viewBox.value = `${-xMiddle} ${-yMiddle} ${treeWidth.value} ${treeHeight.value}`
     }
 
