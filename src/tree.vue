@@ -246,7 +246,9 @@ export default defineComponent({
       treeWidth.value = Number(boxWidth?.split('px')[0])
       treeHeight.value = Number(boxHeight?.split('px')[0])
 
-      viewBox.value = `0 0 ${treeWidth.value} ${treeHeight.value}`
+      const xMiddle = (treeWidth.value - svgWidth) / 2
+      const yMiddle = (treeHeight.value - svgHeight) / 2
+      viewBox.value = `${-xMiddle} ${-yMiddle} ${treeWidth.value} ${treeHeight.value}`
     }
 
     // client与svg坐标相互转换
@@ -361,7 +363,7 @@ export default defineComponent({
       }
     }
 
-    watch(() => props.direction, (val) => {
+    watch(() => props.direction, (val: 'horizontal' | 'vertical') => {
       setAxis()
     })
 
