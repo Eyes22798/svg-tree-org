@@ -1,5 +1,5 @@
- import type { Data, DrawT, Node } from './type'
- import { makeSVG } from './utils/index'
+ import type { Data, DrawT, Node } from '../type'
+ import { makeSVG } from '../utils'
  import { TreeNode } from './tree-node'
  
  export class Tree {

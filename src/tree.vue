@@ -40,7 +40,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, PropType, watch, computed } from '@vue/composition-api'
 import type { Data, Node } from './type'
-import { TreeNode } from './tree-node'
+import { TreeNode } from './core/tree-node'
 import treeNode from './node.vue'
 import { transformData2Tree } from './utils'
 import cloneDeep from 'lodash.clonedeep'

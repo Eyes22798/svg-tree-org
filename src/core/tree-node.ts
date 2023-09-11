@@ -1,5 +1,5 @@
-import { makeSVG } from './utils'
-import type { Node } from './type'
+import { makeSVG } from '../utils'
+import type { Node } from '../type'
 
 const lineColor = '#ddd';               	 // 线条颜色
 const lineWidth = 1;                    	 // 线条宽度
