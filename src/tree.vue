@@ -112,6 +112,18 @@ export default defineComponent({
     draggable: {
       type: Boolean,
       default: true
+    },
+    nodeWidth: {
+      type: Number,
+      default: 100,
+    },
+    nodeHeight: {
+      type: Number,
+      default: 60
+    },
+    marginSize: { // 层间距
+      type: Number,
+      default: 10
     }
   },
   setup(props, { emit }) {
@@ -135,8 +147,8 @@ export default defineComponent({
     const viewBox = ref('0 0 0 0')
     // 设置节点坐标和svg宽高
     const setAxis = () => {
-      const levelXStart: Record<number, number> = {},  // 寻找同级节点的离当前线最近的x坐标，防止节点重叠
-			levelYStart: Record<number, number> = {}
+      const levelXStart: Record<number, number> = {}  // 寻找同级节点的离当前线最近的x坐标，防止节点重叠
+			const levelYStart: Record<number, number> = {}  // 寻找同级节点的离当前线最近的y坐标，防止节点重叠
 
       let xStart = 0,
         svgWidth = 0,
@@ -149,8 +161,11 @@ export default defineComponent({
         const y = parent ? (parent.yStart + parent.line1 + parent.line2 + parent.height) : 0  // line1 line2 参见 node.js
         const x = parent ? (parent.xStart + parent.line1 + parent.line2 + parent.width) : 0   // line1 line2 参见 node.js
 
-        arr.forEach((v: TreeNode, i) => {
+        arr.forEach((v: Node, i) => {
           const node = new TreeNode(v)
+          node.width = props.nodeWidth
+          node.height = props.nodeHeight
+          node.marginSize = props.marginSize
           node.yStart = y
           if (props.direction === 'vertical') node.xStart = x
           node.parentNode = parent
@@ -311,6 +326,7 @@ export default defineComponent({
       emit('zoom', e, viewBox.value)
     }
 
+    // 拖拽相关功能
     const dragging = ref(false)
     const mousedown = () => {
       dragging.value = true
@@ -318,7 +334,6 @@ export default defineComponent({
     const mouseup = () => {
       dragging.value = false
     }
-
     const drag = (e: DragEvent) => {
       if (!dragging.value || !props.draggable) return
       const startViewBox = viewBox.value.split(' ').map(n => parseFloat(n))

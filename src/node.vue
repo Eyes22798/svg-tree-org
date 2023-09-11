@@ -173,7 +173,7 @@ export default defineComponent({
     // 设置节点文本
     const nodeText = ref<Array<string>>([])
     const setNodeText = () => {
-      if (!node.value.name) return
+      if (!node.value.name || props.hasSlot) return
 
       const name = `${node.value.name}`
 
