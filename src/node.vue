@@ -86,8 +86,6 @@ import { defineComponent, ref, PropType, computed, toRefs, onMounted, watch } fr
 import type { Node } from './type'
 
 const paddingSize = 5;                     // 一个节点的padding值
-const line1 = 30;                          //  父子节点间距（上方）
-const line2 = 80;                          //  父子节点间距（下方）
 const maxWidth = 200;                      // 节点矩形框最大宽度
 const maxHeight = 200;                     // 节点矩形框最大高度
 const lineHeight = 10;                     // 文字行间距
@@ -245,8 +243,8 @@ export default defineComponent({
       node.value.middle = middle.value
       node.value.verticalMiddle = verticalMiddle.value
       if (parent) {
-        const startYParent = parent.yStart + parent.height + line1
-        const verticalStartParent = node.value.xStart - line2
+        const startYParent = parent.yStart + parent.height + parent.line1
+        const verticalStartParent = node.value.xStart - parent.line2
         const lineArrowMargin = props.lineArrow.open ? (props.lineArrow.markerWidth + props.lineArrow.margin) : 0
         line2Dth.value = node.value.treeDirection === 'vertical'
           ? `M ${verticalStartParent} ${verticalMiddle.value} L ${node.value.xStart - lineArrowMargin} ${verticalMiddle.value} ${props.lineArrow.open ? '' : 'z'}` // 如果line右箭头不闭合当前路径
@@ -267,8 +265,8 @@ export default defineComponent({
 
       if (!node.value.children || node.value.children.length <= 0) return
 
-      collaspeStartY.value = node.value.yStart + node.value.height + line1
-      collaspeVerticalStartY.value = node.value.xStart + node.value.width + line1
+      collaspeStartY.value = node.value.yStart + node.value.height + node.value.line1
+      collaspeVerticalStartY.value = node.value.xStart + node.value.width + node.value.line1
       const lineCircleMargin = props.lineCircle.open ? props.lineCircle.markerWidth + props.lineCircle.margin : 0
       linesChildDth.value = node.value.treeDirection === 'vertical'
         ? `M ${node.value.xStart + node.value.width + lineCircleMargin} ${verticalMiddle.value} L ${collaspeVerticalStartY.value} ${verticalMiddle.value} z`

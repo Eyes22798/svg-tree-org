@@ -1,16 +1,13 @@
 import { makeSVG } from '../utils'
 import type { Node } from '../type'
 
-const line1 = 30;                          //  父子节点间距（上方）
-const line2 = 80;                          //  父子节点间距（下方）
-
 export class TreeNode {
 	id!: number | string
   name?: string
   level!: number
   children?: Array<Node>
-  line1 = line1
-  line2 = line2
+  line1!: number
+  line2!: number
   marginSize!: number
 
   xStart!: number                      		// x 坐标

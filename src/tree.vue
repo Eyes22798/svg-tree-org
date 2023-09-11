@@ -124,6 +124,14 @@ export default defineComponent({
     marginSize: { // 层间距
       type: Number,
       default: 10
+    },
+    line1: {
+      type: Number,
+      default: 30
+    },
+    line2: {
+      type: Number,
+      default: 80
     }
   },
   setup(props, { emit }) {
@@ -158,14 +166,20 @@ export default defineComponent({
       const func = (arr: Array<Node>, parent?: Node) => {
         if (!arr || arr.length <= 0) return
 
-        const y = parent ? (parent.yStart + parent.line1 + parent.line2 + parent.height) : 0  // line1 line2 参见 node.js
-        const x = parent ? (parent.xStart + parent.line1 + parent.line2 + parent.width) : 0   // line1 line2 参见 node.js
+        const y = parent
+          ? (parent.yStart + (props.direction === 'vertical' ? 0 : parent.line1 + parent.line2) + parent.height)
+          : 0
+        const x = parent
+          ? (parent.xStart + (props.direction === 'horizontal' ? 0 : parent.line1 + parent.line2) + parent.width)
+          : 0
 
         arr.forEach((v: Node, i) => {
           const node = new TreeNode(v)
           node.width = props.nodeWidth
           node.height = props.nodeHeight
           node.marginSize = props.marginSize
+          node.line1 = props.line1
+          node.line2 = props.line2
           node.yStart = y
           if (props.direction === 'vertical') node.xStart = x
           node.parentNode = parent
