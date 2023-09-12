@@ -18,6 +18,7 @@ export const originData = [
     id: 40,
     name: "三层",
     parent_id: 38,
+    lineColor: '#2ABC80',
   },
   {
     id: 41,

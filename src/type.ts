@@ -14,16 +14,17 @@ export interface Node extends Data {
   xStart: number
   yStart: number 
 
-	direction: 'horizontal' | 'vertical'               // 文字排列方向  horizontal:水平   vertical:垂直
-	treeDirection: 'horizontal' | 'vertical'          // 方向  horizontal:水平   vertical:垂直
+	direction: 'horizontal' | 'vertical'                // 文字排列方向  horizontal:水平   vertical:垂直
+	treeDirection: 'horizontal' | 'vertical'            // 方向  horizontal:水平   vertical:垂直
 
-	nodeText: Array<string>                                // 节点主文本 有换行的情况，需要分段显示
+	nodeText: Array<string>                             // 节点主文本 有换行的情况，需要分段显示
 	width: number                                       // 节点最终宽度
 	height: number                                      // 节点最终高度
 	middle: number
 	verticalMiddle: number
+  lineColor: string                                   // 节点前方path颜色
 
-	prevNode?: Node                                       // 前一个兄弟节点
+	prevNode?: Node                                     // 前一个兄弟节点
 	parentNode?: Node
   children?: Array<Node>
   level: number

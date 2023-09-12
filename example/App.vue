@@ -7,7 +7,7 @@
       <svg-tree-org
         :data="data"
         :direction="direction"
-        lineColor="rgba(17, 93, 219, .5)"
+        lineColor="#115DDB"
         :lineArrow="lineArrow"
         :lineCircle="lineCircle"
         :collapsable="false"

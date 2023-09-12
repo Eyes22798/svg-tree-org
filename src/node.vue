@@ -40,19 +40,22 @@
         </template>
       </tree-node>
       <g id="node-line" :close="String(node.close)">
-        <defs>
-          <marker v-if="lineArrow.open" id="triangleMarker" markerUnits="strokeWidth" :markerWidth="lineArrow.markerWidth" :markerHeight="lineArrow.markerHeight" :refX="lineArrow.refX" :refY="lineArrow.refY" orient="auto">
-            <path :stroke="lineColor" :fill="lineColor" :d="`M 0 0 L ${lineArrow.markerWidth } ${lineArrow.markerHeight / 2} L 0 ${lineArrow.markerHeight} z`" />
-          </marker>
-        </defs>
-        <defs>
-          <marker v-if="lineCircle.open" id="circleMarker" :markerWidth="lineCircle.markerWidth" :markerHeight="lineCircle.markerHeight" :refX="lineCircle.refX" :refY="lineCircle.refY" orient="auto" markerUnits="userSpaceOnUse">
-            <circle :cx="lineCircle.markerWidth / 2" :cy="lineCircle.markerHeight / 2" :r="lineCircle.r" fill="none" :stroke="lineColor" :stroke-width="lineCircle.strokeWidth" />
-          </marker>
-        </defs>
-        <path v-if="node.parentNode" class="line2" :d="line2Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" style="marker-end: url(#triangleMarker);" />
         <path v-if="node.parentNode && node.prevNode" class="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
-        <path v-if="node.children && node.children.length > 0" class="lineChild" :d="linesChildDth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" style="marker-start: url(#circleMarker);" />
+
+        <g @mouseover="handleLineMouseover(node)" @onmouseout="handleLineMouseout(node)" fill="none" :stroke="lineColor">
+          <defs>
+            <marker v-if="lineArrow.open" id="triangleMarker" markerUnits="strokeWidth" :markerWidth="lineArrow.markerWidth" :markerHeight="lineArrow.markerHeight" :refX="lineArrow.refX" :refY="lineArrow.refY" orient="auto">
+              <polygon :fill="lineColor" :points="`${0},${0}  ${lineArrow.markerWidth }, ${lineArrow.markerHeight / 2}  ${0}, ${lineArrow.markerHeight}`" />
+            </marker>
+          </defs>
+          <defs>
+            <marker v-if="lineCircle.open" id="circleMarker" :markerWidth="lineCircle.markerWidth" :markerHeight="lineCircle.markerHeight" :refX="lineCircle.refX" :refY="lineCircle.refY" orient="auto" markerUnits="userSpaceOnUse">
+              <circle :cx="lineCircle.markerWidth / 2" :cy="lineCircle.markerHeight / 2" :r="lineCircle.r" :stroke-width="lineCircle.strokeWidth" />
+            </marker>
+          </defs>
+          <path v-if="node.parentNode" class="line2" :d="line2Dth"  :stroke-width="lineWidth" style="marker-end: url(#triangleMarker);" />
+          <path v-if="node.children && node.children.length > 0" class="lineChild" :d="linesChildDth" :stroke-width="lineWidth" style="marker-start: url(#circleMarker);" />
+        </g>
 
         <circle
           v-if="node.children && node.children.length > 0 && collapsable"
@@ -159,7 +162,7 @@ export default defineComponent({
       default: false
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
     const { node, fontSize, letterSpacing } = toRefs(props)
     const middle = computed(() => node.value.xStart + node.value.width / 2) // 中间位置
     const verticalMiddle = computed(() => node.value.yStart + node.value.height / 2)
@@ -167,6 +170,7 @@ export default defineComponent({
       const childs = props.node.children
       return childs
     })
+    const customLineColor = computed(() => node.value.lineColor || props.lineColor)
 
     // 设置节点文本
     const nodeText = ref<Array<string>>([])
@@ -277,6 +281,14 @@ export default defineComponent({
       node.value.close = !node.value.close
     }
 
+    const handleLineMouseover = (node: Node) => {
+      emit('line-mouseover', node)
+    }
+
+    const handleLineMouseout = (node: Node) => {
+      emit('line-mouseout', node)
+    }
+
     watch(() => props.treeDirection, (val) => {
       setNodeText()
       createLine()
@@ -300,7 +312,10 @@ export default defineComponent({
       collaspeStartY,
       collaspeVerticalStartY,
       handleCollapse,
-      childNodes
+      childNodes,
+      customLineColor,
+      handleLineMouseover,
+      handleLineMouseout
     }
   }
 })
