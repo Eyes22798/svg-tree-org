@@ -25,6 +25,7 @@
 
       <tree-node
         v-for="child in childNodes"
+        :id="child.id"
         :node="child"
         :treeDirection="child.treeDirection"
         :key="child.id"
@@ -42,19 +43,26 @@
       <g id="node-line" :close="String(node.close)">
         <path v-if="node.parentNode && node.prevNode" class="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
 
-        <g @mouseover="handleLineMouseover(node)" @onmouseout="handleLineMouseout(node)" fill="none" :stroke="lineColor">
+        <g @mouseover="handleLineMouseover(node)" @onmouseout="handleLineMouseout(node)" fill="none" :stroke="node.lineColor || lineColor">
           <defs>
-            <marker v-if="lineArrow.open" id="triangleMarker" markerUnits="strokeWidth" :markerWidth="lineArrow.markerWidth" :markerHeight="lineArrow.markerHeight" :refX="lineArrow.refX" :refY="lineArrow.refY" orient="auto">
-              <polygon :fill="lineColor" :points="`${0},${0}  ${lineArrow.markerWidth }, ${lineArrow.markerHeight / 2}  ${0}, ${lineArrow.markerHeight}`" />
+            <marker v-if="lineArrow.open" :id="node.id + 'triangleMarker'" markerUnits="strokeWidth" :markerWidth="lineArrow.markerWidth" :markerHeight="lineArrow.markerHeight" :refX="lineArrow.refX" :refY="lineArrow.refY" orient="auto">
+              <polygon :fill="node.lineColor || lineColor" :points="`${0},${0}  ${lineArrow.markerWidth }, ${lineArrow.markerHeight / 2}  ${0}, ${lineArrow.markerHeight}`" />
             </marker>
           </defs>
           <defs>
-            <marker v-if="lineCircle.open" id="circleMarker" :markerWidth="lineCircle.markerWidth" :markerHeight="lineCircle.markerHeight" :refX="lineCircle.refX" :refY="lineCircle.refY" orient="auto" markerUnits="userSpaceOnUse">
-              <circle :cx="lineCircle.markerWidth / 2" :cy="lineCircle.markerHeight / 2" :r="lineCircle.r" :stroke-width="lineCircle.strokeWidth" />
+            <marker v-if="lineCircle.open && node.children && node.children.length > 0" :id="node.id + 'circleMarker'" :markerWidth="lineCircle.markerWidth" :markerHeight="lineCircle.markerHeight" :refX="lineCircle.refX" :refY="lineCircle.refY" orient="auto" markerUnits="userSpaceOnUse">
+              <circle :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor" :cx="lineCircle.markerWidth / 2" :cy="lineCircle.markerHeight / 2" :r="lineCircle.r" :stroke-width="lineCircle.strokeWidth" />
             </marker>
           </defs>
-          <path v-if="node.parentNode" class="line2" :d="line2Dth"  :stroke-width="lineWidth" style="marker-end: url(#triangleMarker);" />
-          <path v-if="node.children && node.children.length > 0" class="lineChild" :d="linesChildDth" :stroke-width="lineWidth" style="marker-start: url(#circleMarker);" />
+          <path v-if="node.parentNode" class="line2" :d="line2Dth" :stroke-width="lineWidth" :style="{ markerEnd: `url(#${node.id}triangleMarker)` }" />
+          <path
+            v-if="node.children && node.children.length > 0"
+            class="lineChild"
+            :d="linesChildDth"
+            :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor"
+            :stroke-width="lineWidth"
+            :style="{ markerEnd: `url(#${node.id}circleMarker)` }"
+          />
         </g>
 
         <circle
@@ -100,6 +108,10 @@ export default defineComponent({
     node: {
       type: Object as PropType<Node>,
       default: () => ({})
+    },
+    id: {
+      type: [String, Number],
+      default: ''
     },
     collapse: {
       type: Boolean,
@@ -170,7 +182,6 @@ export default defineComponent({
       const childs = props.node.children
       return childs
     })
-    const customLineColor = computed(() => node.value.lineColor || props.lineColor)
 
     // 设置节点文本
     const nodeText = ref<Array<string>>([])
@@ -313,7 +324,6 @@ export default defineComponent({
       collaspeVerticalStartY,
       handleCollapse,
       childNodes,
-      customLineColor,
       handleLineMouseover,
       handleLineMouseout
     }

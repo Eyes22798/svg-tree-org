@@ -19,6 +19,7 @@
     >
       <tree-node
         v-for="node in treeData"
+        :id="node.id"
         :lineColor="lineColor"
         :treeDirection="direction"
         :node="node"

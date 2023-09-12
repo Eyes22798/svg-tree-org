@@ -18,12 +18,12 @@ export const originData = [
     id: 40,
     name: "三层",
     parent_id: 38,
-    lineColor: '#2ABC80',
   },
   {
     id: 41,
     name: "四层",
     parent_id: 40,
+    lineColor: '#2ABC80',
   },
   // {
   //   id: 42,
@@ -49,6 +49,7 @@ export const originData = [
     id: 65,
     name: "二层2",
     parent_id: 28,
+    lineColor: '#2ABC80',
   },
   {
     id: 66,
@@ -65,40 +66,41 @@ export const originData = [
     name: "二层4",
     parent_id: 28,
   },
-  // {
-  //   id: 71,
-  //   name: "二层5",
-  //   parent_id: 28,
-  // },
-  // {
-  //   id: 72,
-  //   name: "二层6",
-  //   parent_id: 28,
-  // },
-  // {
-  //   id: 73,
-  //   name: "二层5-1",
-  //   parent_id: 71,
-  // },
-  // {
-  //   id: 76,
-  //   name: "1212",
-  //   parent_id: 65,
-  // },
-  // {
-  //   id: 81,
-  //   name: "2121",
-  //   parent_id: 65,
-  // },
-  // {
-  //   id: 82,
-  //   name: "2123",
-  //   parent_id: 65,
-  // },
-  // {
-  //   id: 83,
-  //   name: "2124",
-  //   parent_id: 65,
-  // }
+  {
+    id: 71,
+    name: "二层5",
+    parent_id: 28,
+  },
+  {
+    id: 72,
+    name: "二层6",
+    parent_id: 28,
+  },
+  {
+    id: 73,
+    name: "二层5-1",
+    parent_id: 71,
+  },
+  {
+    id: 76,
+    name: "1212",
+    parent_id: 65,
+  },
+  {
+    id: 81,
+    name: "2121",
+    parent_id: 65,
+    lineColor: '#2ABC80',
+  },
+  {
+    id: 82,
+    name: "2123",
+    parent_id: 65,
+  },
+  {
+    id: 83,
+    name: "2124",
+    parent_id: 65,
+  }
 ]
 
