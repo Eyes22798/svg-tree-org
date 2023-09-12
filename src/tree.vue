@@ -28,6 +28,8 @@
         :lineArrow="lineArrow"
         :lineCircle="lineCircle"
         :collapsable="collapsable"
+        @line-mouseover="handleLineMouseover"
+        @line-mouseout="handleLineMouseout"
       >
         <template #node="slotProps">
           <slot name="node" :node="slotProps.node" />
@@ -39,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, PropType, watch, computed } from '@vue/composition-api'
+import { defineComponent, ref, onMounted, PropType, watch } from '@vue/composition-api'
 import type { Data, Node } from './type'
 import { TreeNode } from './core/tree-node'
 import treeNode from './node.vue'
@@ -393,6 +395,14 @@ export default defineComponent({
       }
     }
 
+    const handleLineMouseover = (node: Node) => {
+      emit('line-mouseover', node)
+    }
+
+    const handleLineMouseout = (node: Node) => {
+      emit('line-mouseout', node)
+    }
+
     watch(() => props.direction, (val: 'horizontal' | 'vertical') => {
       setAxis()
     })
@@ -415,7 +425,9 @@ export default defineComponent({
       zoom,
       drag,
       mousedown,
-      mouseup
+      mouseup,
+      handleLineMouseover,
+      handleLineMouseout
     }
   }
 })

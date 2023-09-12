@@ -35,6 +35,8 @@
         :lineCircle="lineCircle"
         :collapsable="collapsable"
         :style="{ display: node.close ? 'none' : '' }"
+        @line-mouseover="handleLineMouseover"
+        @line-mouseout="handleLineMouseout"
       >
         <template #node="slotProps">
           <slot name="node" :node="slotProps.node"></slot>

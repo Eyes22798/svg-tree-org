@@ -11,6 +11,7 @@
         :lineArrow="lineArrow"
         :lineCircle="lineCircle"
         :collapsable="false"
+        @line-mouseover="handleLineMouseover"
       >
         <template #node="slotProps">
           <div style="width: 100%;height: 100%;text-align: center;">
@@ -63,12 +64,17 @@ export default defineComponent({
       margin: 4
     })
 
+    const handleLineMouseover = (node: any) => {
+      console.log('node', node)
+    }
+
     return {
       lineArrow,
       lineCircle,
       data,
       direction,
-      handleClick
+      handleClick,
+      handleLineMouseover
     }
   }
 })
