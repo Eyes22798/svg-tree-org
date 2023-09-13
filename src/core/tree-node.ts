@@ -22,6 +22,7 @@ export class TreeNode {
 	middle!: number
 	verticalMiddle!: number
   lineColor!: string
+  lineDasharray!: string
 	close?: boolean
 
 	prevNode?: Node;                        // 前一个兄弟节点

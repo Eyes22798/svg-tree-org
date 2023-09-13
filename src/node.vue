@@ -45,7 +45,13 @@
       <g id="node-line" :close="String(node.close)">
         <path v-if="node.parentNode && node.prevNode" class="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" stroke-linecap="round" />
 
-        <g @mouseover="handleLineMouseover(node)" @onmouseout="handleLineMouseout(node)" fill="none" :stroke="node.lineColor || lineColor">
+        <g
+          @mouseover="handleLineMouseover(node)"
+          @onmouseout="handleLineMouseout(node)"
+          fill="none"
+          :stroke="node.lineColor || lineColor"
+          :stroke-dasharray="node.lineDasharray || 'none'"
+        >
           <defs>
             <marker v-if="lineArrow.open" :id="node.id + 'triangleMarker'" markerUnits="strokeWidth" :markerWidth="lineArrow.markerWidth" :markerHeight="lineArrow.markerHeight" :refX="lineArrow.refX" :refY="lineArrow.refY" orient="auto">
               <polygon :fill="node.lineColor || lineColor" :points="`${0},${0}  ${lineArrow.markerWidth }, ${lineArrow.markerHeight / 2}  ${0}, ${lineArrow.markerHeight}`" />
@@ -53,17 +59,25 @@
           </defs>
           <defs>
             <marker v-if="lineCircle.open && node.children && node.children.length > 0" :id="node.id + 'circleMarker'" :markerWidth="lineCircle.markerWidth" :markerHeight="lineCircle.markerHeight" :refX="lineCircle.refX" :refY="lineCircle.refY" orient="auto" markerUnits="userSpaceOnUse">
-              <circle :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor" :cx="lineCircle.markerWidth / 2" :cy="lineCircle.markerHeight / 2" :r="lineCircle.r" :stroke-width="lineCircle.strokeWidth" />
+              <circle :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor" :cx="lineCircle.markerWidth / 2" :cy="lineCircle.markerHeight / 2" :r="lineCircle.r" :stroke-width="lineCircle.strokeWidth" stroke-dasharray="none" />
             </marker>
           </defs>
-          <path v-if="node.parentNode" class="line2" :d="line2Dth" :stroke-width="lineWidth" stroke-linecap="round" :style="{ markerEnd: `url(#${node.id}triangleMarker)` }" />
+          <path
+            v-if="node.parentNode"
+            class="line2"
+            :d="line2Dth"
+            :stroke-width="lineWidth"
+            stroke-linecap="round"
+            :style="{ markerEnd: `url(#${node.id}triangleMarker)` }"
+          />
           <path
             v-if="node.children && node.children.length > 0"
             class="lineChild"
             :d="linesChildDth"
-            :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor"
             :stroke-width="lineWidth"
             stroke-linecap="round"
+            :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor"
+            :stroke-dasharray="node.children[0].lineDasharray ? node.children[0].lineDasharray : 'none'"
             :style="{ markerEnd: `url(#${node.id}circleMarker)` }"
           />
         </g>

@@ -23,6 +23,7 @@ export interface Node extends Data {
 	middle: number
 	verticalMiddle: number
   lineColor: string                                   // 节点前方path颜色
+  lineDasharray: string
 
 	prevNode?: Node                                     // 前一个兄弟节点
 	parentNode?: Node
