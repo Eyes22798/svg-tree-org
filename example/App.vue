@@ -10,7 +10,9 @@
         lineColor="#115DDB"
         :lineArrow="lineArrow"
         :lineCircle="lineCircle"
-        :collapsable="false"
+        :collapsable="true"
+        :nodeWidth="100"
+        :nodeHeight="60"
         @line-mouseover="handleLineMouseover"
       >
         <template #node="slotProps">
