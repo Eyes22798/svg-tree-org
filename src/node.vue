@@ -43,7 +43,7 @@
         </template>
       </tree-node>
       <g id="node-line" :close="String(node.close)">
-        <path v-if="node.parentNode && node.prevNode" class="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" />
+        <path v-if="node.parentNode && node.prevNode" class="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" stroke-linecap="round" />
 
         <g @mouseover="handleLineMouseover(node)" @onmouseout="handleLineMouseout(node)" fill="none" :stroke="node.lineColor || lineColor">
           <defs>
@@ -56,13 +56,14 @@
               <circle :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor" :cx="lineCircle.markerWidth / 2" :cy="lineCircle.markerHeight / 2" :r="lineCircle.r" :stroke-width="lineCircle.strokeWidth" />
             </marker>
           </defs>
-          <path v-if="node.parentNode" class="line2" :d="line2Dth" :stroke-width="lineWidth" :style="{ markerEnd: `url(#${node.id}triangleMarker)` }" />
+          <path v-if="node.parentNode" class="line2" :d="line2Dth" :stroke-width="lineWidth" stroke-linecap="round" :style="{ markerEnd: `url(#${node.id}triangleMarker)` }" />
           <path
             v-if="node.children && node.children.length > 0"
             class="lineChild"
             :d="linesChildDth"
             :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor"
             :stroke-width="lineWidth"
+            stroke-linecap="round"
             :style="{ markerEnd: `url(#${node.id}circleMarker)` }"
           />
         </g>
