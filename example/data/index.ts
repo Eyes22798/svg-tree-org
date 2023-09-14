@@ -18,7 +18,6 @@ export const originData = [
     id: 40,
     name: "三层",
     parent_id: 38,
-    lineDasharray: '5, 5',
   },
   {
     id: 41,
@@ -102,6 +101,7 @@ export const originData = [
     id: 83,
     name: "2124",
     parent_id: 65,
+    lineDasharray: '5, 5',
   }
 ]
 

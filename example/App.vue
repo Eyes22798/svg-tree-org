@@ -7,12 +7,14 @@
       <svg-tree-org
         :data="data"
         :direction="direction"
+        :zoomable="zoomable"
         lineColor="#115DDB"
         :lineArrow="lineArrow"
         :lineCircle="lineCircle"
         :collapsable="true"
         :nodeWidth="100"
         :nodeHeight="60"
+        :marginSize="10"
         @line-mouseover="handleLineMouseover"
       >
         <template #node="slotProps">
@@ -70,11 +72,14 @@ export default defineComponent({
       console.log('node', node)
     }
 
+    const zoomable = ref(true)
+
     return {
       lineArrow,
       lineCircle,
       data,
       direction,
+      zoomable,
       handleClick,
       handleLineMouseover
     }

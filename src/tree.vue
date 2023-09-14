@@ -52,10 +52,6 @@ export default defineComponent({
   name: 'SvgTreeOrg',
   components: { treeNode },
   props: {
-    hasCreate: {
-      type: Boolean,
-      default: false
-    },
     data: {
       type: Array as PropType<Array<Data>>,
       default: () => []
@@ -67,14 +63,6 @@ export default defineComponent({
     collapsable: {
       type: Boolean,
       default: true
-    },
-    $box: {
-      type: Object as PropType<HTMLElement | null>,
-      default: null
-    },
-    $svg: {
-      type: Object as PropType<SVGElement | null>,
-      default: null
     },
     toolsHandle:{
       type: Function,
