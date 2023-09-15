@@ -28,6 +28,8 @@
         :lineArrow="lineArrow"
         :lineCircle="lineCircle"
         :collapsable="collapsable"
+        :source="linkNodeData.find((item) => item.source === node.id) ? node.id : ''"
+        :target="linkNodeData.find((item) => item.target === node.id) ? node.id : ''"
         @line-mouseover="handleLineMouseover"
         @line-mouseout="handleLineMouseout"
       >
@@ -41,12 +43,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, PropType, watch } from '@vue/composition-api'
-import type { Data, Node } from './type'
+import { defineComponent, ref, onMounted, PropType, watch, provide } from '@vue/composition-api'
+import type { Data, Node, LinkNode } from './type'
 import { TreeNode } from './core/tree-node'
 import treeNode from './node.vue'
 import { transformData2Tree } from './utils'
 import cloneDeep from 'lodash.clonedeep'
+import {scale, rotate, translate, compose, applyToPoint, flipY } from 'transformation-matrix'
 
 export default defineComponent({
   name: 'SvgTreeOrg',
@@ -54,6 +57,10 @@ export default defineComponent({
   props: {
     data: {
       type: Array as PropType<Array<Data>>,
+      default: () => []
+    },
+    linkNodeData: {
+      type: Array as PropType<Array<LinkNode>>,
       default: () => []
     },
     direction: {
@@ -271,6 +278,30 @@ export default defineComponent({
       viewBox.value = `${-xMiddle} ${-yMiddle} ${treeWidth.value} ${treeHeight.value}`
     }
 
+    // 跨节点连接
+    const setNodeLink = () => {
+      provide('linkNodeData', props.linkNodeData)
+      provide('treeData', currentTreeData)
+    }
+
+    const matrixTransformSVG = (treeData: Array<Node>) => {
+      let matrix = compose(
+        rotate(Math.PI/3, 200, 200)
+      )
+      const transform = (treeData: Array<Node>) => {
+        treeData.forEach((node) => {
+          const { x, y } = applyToPoint(matrix, {x: node.xStart, y: node.yStart})
+          node.xStart = x
+          node.yStart = y
+          if (node.children && node.children?.length > 0) {
+            transform(node.children)
+          }
+        })
+      }
+
+      transform(treeData)
+    }
+
     // client与svg坐标相互转换
     const svgMatrixTransform = (e: DragEvent | WheelEvent) => {
       const startViewBox = viewBox.value.split(' ').map(n => parseFloat(n))
@@ -396,10 +427,14 @@ export default defineComponent({
     })
 
     onMounted(() => {
-      if (props.data) {
+      if (props.data && props.data.length > 0) {
         setData(props.data)
         setAxis()
       }
+      if (props.linkNodeData) {
+        setNodeLink()
+      }
+      // matrixTransformSVG(treeData.value)
     })
 
     return {

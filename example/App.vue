@@ -12,13 +12,14 @@
         :lineArrow="lineArrow"
         :lineCircle="lineCircle"
         :collapsable="true"
-        :nodeWidth="100"
+        :nodeWidth="70"
         :nodeHeight="60"
         :marginSize="10"
+        :linkNodeData="linkData"
         @line-mouseover="handleLineMouseover"
       >
         <template #node="slotProps">
-          <div style="width: 100%;height: 100%;text-align: center;">
+          <div class="node-item">
             <img style="width: 56px;" src="./img/terminal.png" alt="">
             <p style="display: block;color: #999;margin: 0;font-size: 12px;">{{ slotProps.node.id }}Desktop</p>
           </div>
@@ -31,7 +32,7 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api'
 import SvgTreeOrg from '../src/tree.vue'
-import { originData } from './data/index'
+import { originData, linkNodeData } from './data/index'
 
 export default defineComponent({
   components: {
@@ -40,6 +41,7 @@ export default defineComponent({
   setup() {
     const direction = ref('vertical')
     const data = ref(originData)
+    const linkData = ref(linkNodeData)
     const handleClick = () => {
       if (direction.value === 'vertical') {
         direction.value = 'horizontal'
@@ -80,6 +82,7 @@ export default defineComponent({
       data,
       direction,
       zoomable,
+      linkData,
       handleClick,
       handleLineMouseover
     }
@@ -105,5 +108,10 @@ export default defineComponent({
   width: 100%;
   height: 800px;
   border: 1px solid #ddd;
+}
+
+.node-item {
+  width: 100%;height: 100%;text-align: center;
+  // transform: rotate3d(1, 1, 1, 308deg);
 }
 </style>

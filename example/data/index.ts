@@ -102,6 +102,12 @@ export const originData = [
     name: "2124",
     parent_id: 65,
     lineDasharray: '5, 5',
-  }
+  },
 ]
 
+export const linkNodeData = [
+  // {
+  //   source: 38,
+  //   target: 65
+  // }
+]

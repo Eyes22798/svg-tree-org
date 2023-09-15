@@ -35,6 +35,8 @@
         :lineCircle="lineCircle"
         :collapsable="collapsable"
         :style="{ display: node.close ? 'none' : '' }"
+        :source="linkNodeData.find((item) => item.source === child.id) ? child.id : ''"
+        :target="linkNodeData.find((item) => item.target === child.id) ? child.id : ''"
         @line-mouseover="handleLineMouseover"
         @line-mouseout="handleLineMouseout"
       >
@@ -107,12 +109,28 @@
           @click="handleCollapse"
         >{{ node.close ? '+' : '-' }}</text>
       </g>
+      <g id="link-line">
+        <defs>
+          <marker id="markerArrow" markerWidth="13" markerHeight="13" refX="2" refY="6" orient="auto">
+            <path d="M2,2 L2,11 L10,6 L2,2" style="fill: #000;" />
+          </marker>
+        </defs>
+        <path
+          class="link-line"
+          :d="linkLineDth"
+          fill="none"
+          :stroke="lineColor"
+          :stroke-width="lineWidth"
+          style="marker-mid:url(#markerArrow);"
+        />
+      </g>
     </g>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType, computed, toRefs, onMounted, watch } from '@vue/composition-api'
-import type { Node } from './type'
+import { defineComponent, ref, PropType, computed, toRefs, onMounted, watch, inject } from '@vue/composition-api'
+import type { Node, LinkNode } from './type'
+import { findTreeNode } from './utils/index'
 
 const paddingSize = 5;                     // 一个节点的padding值
 const maxWidth = 200;                      // 节点矩形框最大宽度
@@ -190,16 +208,21 @@ export default defineComponent({
     hasSlot: {
       type: [Boolean, Function],
       default: false
-    }
+    },
+    source: {
+      type: [String, Number],
+      default: ''
+    },
+    target: {
+      type: [String, Number],
+      default: ''
+    },
   },
   setup(props, { emit }) {
     const { node, fontSize, letterSpacing } = toRefs(props)
     const middle = computed(() => node.value.xStart + node.value.width / 2) // 中间位置
     const verticalMiddle = computed(() => node.value.yStart + node.value.height / 2)
-    const childNodes = computed(() => {
-      const childs = props.node.children
-      return childs
-    })
+    const childNodes = computed(() => props.node.children)
 
     // 设置节点文本
     const nodeText = ref<Array<string>>([])
@@ -306,6 +329,27 @@ export default defineComponent({
         : `M ${middle.value} ${node.value.yStart + node.value.height + lineCircleMargin} L ${middle.value} ${collaspeStartY.value} z`
     }
 
+    const linkLineDth = ref('') // 跨节点连接线
+    const linkNodeData = inject('linkNodeData') as unknown as Array<LinkNode>
+    const treeData = inject('treeData') as unknown as Array<Node>
+    const createLinkLine = () => {
+      let linkLine: Array<Node | undefined> = []
+      if (props.target) {
+        const source = linkNodeData.find((item) => item.target === props.target)?.source ?? -1
+        const sourceNode = findTreeNode(source, treeData)
+        const targetNode = findTreeNode(props.target, treeData)
+        linkLine = [sourceNode, targetNode]
+        const y1 = Number(sourceNode?.yStart) + (node.value.height / 2)
+        const y2 = Number(targetNode?.yStart) + (node.value.height / 2)
+        const q1 = Number(sourceNode?.xStart) - node.value.width / 2
+        const q2 = y1 + (y2 - y1) / 2
+
+        linkLineDth.value = `M ${sourceNode?.xStart}, ${y1} Q ${q1}, ${q2} ${targetNode?.xStart}, ${y2}`
+
+        console.log('s t', linkLineDth.value)
+      }
+    }
+
     const handleCollapse = () => {
       node.value.close = !node.value.close
     }
@@ -326,6 +370,7 @@ export default defineComponent({
     onMounted(() => {
       setNodeText()
       createLine()
+      createLinkLine()
     })
 
     return {
@@ -343,7 +388,10 @@ export default defineComponent({
       handleCollapse,
       childNodes,
       handleLineMouseover,
-      handleLineMouseout
+      handleLineMouseout,
+      createLinkLine,
+      linkNodeData,
+      linkLineDth
     }
   }
 })

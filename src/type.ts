@@ -39,6 +39,11 @@ export interface Node extends Data {
   createLine: () => SVGElement
 }
 
+export interface LinkNode {
+  source: string | number
+  target: string | number
+}
+
 export interface DrawT {
   hasCreated?: boolean
   data: Array<Data>
