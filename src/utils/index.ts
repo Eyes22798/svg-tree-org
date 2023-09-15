@@ -1,4 +1,4 @@
-import type { Data } from '../type'
+import type { Data, Node } from '../type'
 
 export const transformData2Tree = (data: Array<Data>): Array<Data> => {
   let treeData = JSON.parse(JSON.stringify(data))
@@ -19,6 +19,19 @@ export const transformData2Tree = (data: Array<Data>): Array<Data> => {
   treeData = top.children || []
 
   return treeData
+}
+
+export const findTreeNode = (id: string | number, tree: Array<Node>): Node | undefined => {
+  let node: Node | undefined  = undefined
+  const findNode = (id: string | number, tree: Array<Node>) => {
+    node = tree.find((item) => item.id === id)
+    if (node || tree.length === 0) return
+    for (const v of tree) {
+      findNode(id, v.children ?? [])
+    }
+  }
+  findNode(id, tree)
+  return node
 }
 
 export const uuid = () => {
