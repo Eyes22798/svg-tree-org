@@ -340,14 +340,17 @@ export default defineComponent({
         const sourceNode = findTreeNode(source, treeData)
         const targetNode = findTreeNode(props.target, treeData)
         linkLine = [sourceNode, targetNode]
-        const y1 = Number(sourceNode?.yStart) + (node.value.height / 2)
-        const y2 = Number(targetNode?.yStart) + (node.value.height / 2)
-        const q1 = Number(sourceNode?.xStart) - node.value.width / 2
-        const q2 = y1 + (y2 - y1) / 2
+        if (sourceNode?.xStart === targetNode?.xStart) {
+          const y1 = Number(sourceNode?.yStart) + (node.value.height / 2)
+          const y2 = Number(targetNode?.yStart) + (node.value.height / 2)
+          const q1 = Number(sourceNode?.xStart) - node.value.width
+          const q2 = y1 + (y2 - y1) / 2
 
-        linkLineDth.value = `M ${sourceNode?.xStart}, ${y1} Q ${q1}, ${q2} ${targetNode?.xStart}, ${y2}`
-
-        console.log('s t', linkLineDth.value)
+          linkLineDth.value = `M ${sourceNode?.xStart}, ${y1} Q ${q1}, ${q2} ${targetNode?.xStart}, ${y2}`
+        } else {
+          // console.log(sourceNode, targetNode)
+        }
+        // console.log('s t', linkLineDth.value)
       }
     }
 
