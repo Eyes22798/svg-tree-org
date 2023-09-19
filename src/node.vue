@@ -1,130 +1,131 @@
 <template>
-    <g
-      :collapse="collapse"
-      :id="node.id"
+  <g
+    :collapse="collapse"
+    :id="node.id"
+    :root="node.parent_id === 0"
+  >
+    <foreignObject v-if="$scopedSlots.node" :x="node.xStart" :y="node.yStart" :width="node.width" :height="node.height">
+      <slot name="node" :node="node"></slot>
+    </foreignObject>
+    <rect
+      v-if="!hasSlot"
+      :x="node.xStart" :y="node.yStart" :width="node.width" :height="node.height" rx="2"
+      class="node-rect"
+      fill="white" stroke="#ddd" stroke-width="1"
+    ></rect>
+    <g v-if="!hasSlot">
+      <text
+        fill="black" stroke="none"
+        :font-size="fontSize"
+        :letter-spacing="letterSpacing"
+        text-anchor="middle" dominant-baseline="middle"
+        :x="middle"
+        :y="startY"
+      >{{ nodeText[0] }}</text>
+    </g>
+
+    <tree-node
+      v-for="child in childNodes"
+      :id="child.id"
+      :node="child"
+      :treeDirection="child.treeDirection"
+      :key="child.id"
+      :lineColor="lineColor"
+      :hasSlot="hasSlot"
+      :lineArrow="lineArrow"
+      :lineCircle="lineCircle"
+      :collapsable="collapsable"
+      :style="{ display: node.close ? 'none' : '' }"
+      :source="linkNodeData.find((item) => item.source === child.id) ? child.id : ''"
+      :target="linkNodeData.find((item) => item.target === child.id) ? child.id : ''"
+      @line-mouseover="handleLineMouseover"
+      @line-mouseout="handleLineMouseout"
     >
-      <foreignObject v-if="$scopedSlots.node" :x="node.xStart" :y="node.yStart" :width="node.width" :height="node.height">
-        <slot name="node" :node="node"></slot>
-      </foreignObject>
-      <rect
-        v-if="!hasSlot"
-        :x="node.xStart" :y="node.yStart" :width="node.width" :height="node.height" rx="2"
-        class="node-rect"
-        fill="white" stroke="#ddd" stroke-width="1"
-      ></rect>
-      <g v-if="!hasSlot">
-        <text
-          fill="black" stroke="none"
-          :font-size="fontSize"
-          :letter-spacing="letterSpacing"
-          text-anchor="middle" dominant-baseline="middle"
-          :x="middle"
-          :y="startY"
-        >{{ nodeText[0] }}</text>
-      </g>
+      <template #node="slotProps">
+        <slot name="node" :node="slotProps.node"></slot>
+      </template>
+    </tree-node>
+    <g id="node-line" :close="String(node.close)">
+      <path v-if="node.parentNode && node.prevNode" class="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" stroke-linecap="round" />
 
-      <tree-node
-        v-for="child in childNodes"
-        :id="child.id"
-        :node="child"
-        :treeDirection="child.treeDirection"
-        :key="child.id"
-        :lineColor="lineColor"
-        :hasSlot="hasSlot"
-        :lineArrow="lineArrow"
-        :lineCircle="lineCircle"
-        :collapsable="collapsable"
-        :style="{ display: node.close ? 'none' : '' }"
-        :source="linkNodeData.find((item) => item.source === child.id) ? child.id : ''"
-        :target="linkNodeData.find((item) => item.target === child.id) ? child.id : ''"
-        @line-mouseover="handleLineMouseover"
-        @line-mouseout="handleLineMouseout"
+      <g
+        @mouseover="handleLineMouseover(node)"
+        @onmouseout="handleLineMouseout(node)"
+        fill="none"
+        :stroke="node.lineColor || lineColor"
+        :stroke-dasharray="node.lineDasharray || 'none'"
       >
-        <template #node="slotProps">
-          <slot name="node" :node="slotProps.node"></slot>
-        </template>
-      </tree-node>
-      <g id="node-line" :close="String(node.close)">
-        <path v-if="node.parentNode && node.prevNode" class="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" stroke-linecap="round" />
-
-        <g
-          @mouseover="handleLineMouseover(node)"
-          @onmouseout="handleLineMouseout(node)"
-          fill="none"
-          :stroke="node.lineColor || lineColor"
-          :stroke-dasharray="node.lineDasharray || 'none'"
-        >
-          <defs>
-            <marker v-if="lineArrow.open" :id="node.id + 'triangleMarker'" markerUnits="strokeWidth" :markerWidth="lineArrow.markerWidth" :markerHeight="lineArrow.markerHeight" :refX="lineArrow.refX" :refY="lineArrow.refY" orient="auto">
-              <polygon :fill="node.lineColor || lineColor" :points="`${0},${0}  ${lineArrow.markerWidth }, ${lineArrow.markerHeight / 2}  ${0}, ${lineArrow.markerHeight}`" />
-            </marker>
-          </defs>
-          <defs>
-            <marker v-if="lineCircle.open && node.children && node.children.length > 0" :id="node.id + 'circleMarker'" :markerWidth="lineCircle.markerWidth" :markerHeight="lineCircle.markerHeight" :refX="lineCircle.refX" :refY="lineCircle.refY" orient="auto" markerUnits="userSpaceOnUse">
-              <circle :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor" :cx="lineCircle.markerWidth / 2" :cy="lineCircle.markerHeight / 2" :r="lineCircle.r" :stroke-width="lineCircle.strokeWidth" stroke-dasharray="none" />
-            </marker>
-          </defs>
-          <path
-            v-if="node.parentNode"
-            class="line2"
-            :d="line2Dth"
-            :stroke-width="lineWidth"
-            stroke-linecap="round"
-            :style="{ markerEnd: `url(#${node.id}triangleMarker)` }"
-          />
-          <path
-            v-if="node.children && node.children.length > 0"
-            class="lineChild"
-            :d="linesChildDth"
-            :stroke-width="lineWidth"
-            stroke-linecap="round"
-            :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor"
-            :stroke-dasharray="node.children[0].lineDasharray ? node.children[0].lineDasharray : 'none'"
-            :style="{ markerEnd: `url(#${node.id}circleMarker)` }"
-          />
-        </g>
-
-        <circle
-          v-if="node.children && node.children.length > 0 && collapsable"
-          :cx="node.treeDirection === 'vertical' ? collaspeVerticalStartY : middle"
-          :cy="node.treeDirection === 'vertical' ? verticalMiddle : collaspeStartY"
-          :r="collapseSize"
-          fill="white"
-          :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor"
-          :stroke-width="lineWidth"
-          style="cursor: pointer"
-          @click="handleCollapse"
-        />
-
-        <text
-          v-if="node.children && node.children.length > 0 && collapsable"
-          :x="node.treeDirection === 'vertical' ? collaspeVerticalStartY : middle"
-          :y="node.treeDirection === 'vertical' ? verticalMiddle : collaspeStartY"
-          :font-size="12"
-          :fill="lineColor"
-          :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor"
-          text-anchor="middle"
-          dominant-baseline="middle"
-          style="cursor: pointer"
-          @click="handleCollapse"
-        >{{ node.close ? '+' : '-' }}</text>
-      </g>
-      <g id="link-line">
         <defs>
-          <marker id="markerArrow" markerWidth="13" markerHeight="13" refX="2" refY="6" orient="auto">
-            <path d="M2,2 L2,11 L10,6 L2,2" style="fill: #000;" />
+          <marker v-if="lineArrow.open" :id="node.id + 'triangleMarker'" markerUnits="strokeWidth" :markerWidth="lineArrow.markerWidth" :markerHeight="lineArrow.markerHeight" :refX="lineArrow.refX" :refY="lineArrow.refY" orient="auto">
+            <polygon :fill="node.lineColor || lineColor" :points="`${0},${0}  ${lineArrow.markerWidth }, ${lineArrow.markerHeight / 2}  ${0}, ${lineArrow.markerHeight}`" />
+          </marker>
+        </defs>
+        <defs>
+          <marker v-if="lineCircle.open && node.children && node.children.length > 0" :id="node.id + 'circleMarker'" :markerWidth="lineCircle.markerWidth" :markerHeight="lineCircle.markerHeight" :refX="lineCircle.refX" :refY="lineCircle.refY" orient="auto" markerUnits="userSpaceOnUse">
+            <circle :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor" :cx="lineCircle.markerWidth / 2" :cy="lineCircle.markerHeight / 2" :r="lineCircle.r" :stroke-width="lineCircle.strokeWidth" stroke-dasharray="none" />
           </marker>
         </defs>
         <path
-          class="link-line"
-          :d="linkLineDth"
-          fill="none"
-          :stroke="lineColor"
+          v-if="node.parentNode"
+          class="line2"
+          :d="line2Dth"
           :stroke-width="lineWidth"
-          style="marker-mid:url(#markerArrow);"
+          stroke-linecap="round"
+          :style="{ markerEnd: `url(#${node.id}triangleMarker)` }"
+        />
+        <path
+          v-if="node.children && node.children.length > 0"
+          class="lineChild"
+          :d="linesChildDth"
+          :stroke-width="lineWidth"
+          stroke-linecap="round"
+          :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor"
+          :stroke-dasharray="node.children[0].lineDasharray ? node.children[0].lineDasharray : 'none'"
+          :style="{ markerEnd: `url(#${node.id}circleMarker)` }"
         />
       </g>
+
+      <circle
+        v-if="node.children && node.children.length > 0 && collapsable"
+        :cx="node.treeDirection === 'vertical' ? collaspeVerticalStartY : middle"
+        :cy="node.treeDirection === 'vertical' ? verticalMiddle : collaspeStartY"
+        :r="collapseSize"
+        fill="white"
+        :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor"
+        :stroke-width="lineWidth"
+        style="cursor: pointer"
+        @click="handleCollapse"
+      />
+
+      <text
+        v-if="node.children && node.children.length > 0 && collapsable"
+        :x="node.treeDirection === 'vertical' ? collaspeVerticalStartY : middle"
+        :y="node.treeDirection === 'vertical' ? verticalMiddle : collaspeStartY"
+        :font-size="12"
+        :fill="lineColor"
+        :stroke="node.children[0].lineColor ? node.children[0].lineColor : lineColor"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        style="cursor: pointer"
+        @click="handleCollapse"
+      >{{ node.close ? '+' : '-' }}</text>
     </g>
+    <g id="link-line">
+      <defs>
+        <marker id="markerArrow" markerWidth="13" markerHeight="13" refX="2" refY="6" orient="auto">
+          <path d="M2,2 L2,11 L10,6 L2,2" style="fill: #000;" />
+        </marker>
+      </defs>
+      <path
+        class="link-line"
+        :d="linkLineDth"
+        fill="none"
+        :stroke="lineColor"
+        :stroke-width="lineWidth"
+        style="marker-mid:url(#markerArrow);"
+      />
+    </g>
+  </g>
 </template>
 
 <script lang="ts">
