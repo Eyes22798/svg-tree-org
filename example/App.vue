@@ -14,7 +14,8 @@
         :collapsable="true"
         :nodeWidth="70"
         :nodeHeight="60"
-        :marginSize="10"
+        :rootNodesep="100"
+        :marginSize="0"
         :linkNodeData="linkData"
         @line-mouseover="handleLineMouseover"
       >

@@ -103,11 +103,63 @@ export const originData = [
     parent_id: 65,
     lineDasharray: '5, 5',
   },
+
+  {
+    id: 100,
+    name: "100",
+    parent_id: 0,
+  },
+  {
+    id: 101,
+    name: "101",
+    parent_id: 100,
+  },
+  {
+    id: 102,
+    name: "102",
+    parent_id: 101,
+  },
+  {
+    id: 103,
+    name: "103",
+    parent_id: 102,
+  },
+  {
+    id: 104,
+    name: "104",
+    parent_id: 103,
+  },
+
+  {
+    id: 200,
+    name: "200",
+    parent_id: 0,
+  },
+  {
+    id: 201,
+    name: "201",
+    parent_id: 200,
+  },
+  {
+    id: 202,
+    name: "202",
+    parent_id: 201,
+  },
+  {
+    id: 203,
+    name: "203",
+    parent_id: 202,
+  },
+  {
+    id: 204,
+    name: "204",
+    parent_id: 202,
+  },
 ]
 
 export const linkNodeData = [
   // {
-  //   source: 38,
-  //   target: 65
+  //   source: 28,
+  //   target: 100
   // }
 ]

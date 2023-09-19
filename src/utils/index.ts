@@ -1,9 +1,12 @@
 import type { Data, Node } from '../type'
 
 export const transformData2Tree = (data: Array<Data>): Array<Data> => {
-  let treeData = JSON.parse(JSON.stringify(data))
+  let treeData = JSON.parse(JSON.stringify(data)) as Array<Data>
   const findChild = (rootEl: Data) => {
     const a = treeData.filter((v: Data) => v.parent_id === rootEl.id)
+    if (rootEl.id === 0) { // marker first root node
+      a[0].first = true
+    }
     const b = treeData.filter((v: Data) => v.parent_id !== rootEl.id)
     treeData = b
     rootEl.children = a
@@ -18,7 +21,50 @@ export const transformData2Tree = (data: Array<Data>): Array<Data> => {
 	findChild(top)
   treeData = top.children || []
 
+  treeData.forEach((item) => {
+    if (!item.first) {
+      findFirstLeafNode([item])
+    }
+  })
+
   return treeData
+}
+
+export function findLastNode(tree: Array<Data>) {
+  if (!Array.isArray(tree) || tree.length === 0) {
+    return null; // 如果树为空或不是数组，返回 null
+  }
+
+  const lastNode = tree[tree.length - 1]; // 获取数组的最后一个元素
+
+  if (lastNode.children && lastNode.children.length > 0) {
+    // 如果最后一个元素有子节点，递归查找子节点中的最后一个元素
+    findLastNode(lastNode.children);
+  } else {
+    lastNode.lastLeafNode = true
+  }
+}
+
+export function findFirstLeafNode(tree: Array<Data>): Data | null {
+  if (!Array.isArray(tree) || tree.length === 0) {
+    return null; // 如果树为空或不是数组，返回 null
+  }
+
+  for (const node of tree) {
+    if (!node.children || node.children.length === 0) {
+      // 如果节点没有子节点，即为叶子节点
+      return node;
+    } else {
+      // 如果节点有子节点，递归查找子节点中的第一个叶子节点
+      const firstLeaf = findFirstLeafNode(node.children);
+      if (firstLeaf) {
+        firstLeaf.firstLeafNode = true
+        return firstLeaf; // 返回第一个叶子节点
+      }
+    }
+  }
+
+  return null; // 如果树中没有叶子节点，返回 null
 }
 
 export const findTreeNode = (id: string | number, tree: Array<Node>): Node | undefined => {

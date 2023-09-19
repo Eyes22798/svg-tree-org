@@ -4,12 +4,16 @@ export interface Data {
   parent_id?: string | number
   level?: number
   children?: Array<Data>
+  first?: boolean
+  lastLeafNode?: boolean
+  firstLeafNode?: boolean
 }
 
 export interface Node extends Data {
   line1: number
   line2: number
   marginSize: number
+  rootNodesep: number
 
   xStart: number
   yStart: number 
@@ -26,6 +30,7 @@ export interface Node extends Data {
   lineDasharray: string
 
 	prevNode?: Node                                     // 前一个兄弟节点
+  nextNode?: Node
 	parentNode?: Node
   children?: Array<Node>
   level: number

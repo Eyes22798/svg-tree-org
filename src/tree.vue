@@ -39,7 +39,6 @@
       </tree-node>
     </svg>
   </div>
-
 </template>
 
 <script lang="ts">
@@ -119,6 +118,10 @@ export default defineComponent({
       type: Number,
       default: 60
     },
+    rootNodesep: {
+      type: Number,
+      default: 10
+    },
     marginSize: { // 层间距
       type: Number,
       default: 10
@@ -159,7 +162,7 @@ export default defineComponent({
       let xStart = 0,
         svgWidth = 0,
         svgHeight = 0
-      let yStart = props.direction === 'vertical' ? 0 : 0
+      let yStart = 0
 
       const func = (arr: Array<Node>, parent?: Node) => {
         if (!arr || arr.length <= 0) return
@@ -176,12 +179,14 @@ export default defineComponent({
           node.width = props.nodeWidth
           node.height = props.nodeHeight
           node.marginSize = props.marginSize
+          node.rootNodesep = props.rootNodesep
           node.line1 = props.line1
           node.line2 = props.line2
           node.yStart = y
           if (props.direction === 'vertical') node.xStart = x
           node.parentNode = parent
           node.prevNode = arr[i - 1]
+          node.nextNode = arr[i + 1]
           node.toolsHandle = props.toolsHandle  // 操作按钮
           node.treeDirection = props.direction  // 树的方向
           node.close = false
@@ -244,9 +249,17 @@ export default defineComponent({
             if (props.direction === 'vertical') {
               node.yStart = yStart
               yStart += node.height + node.marginSize
+              if (node.rootNodesep && node.firstLeafNode) {
+                node.yStart += node.rootNodesep
+                yStart += node.rootNodesep
+              }
             } else {
               node.xStart = xStart
               xStart += node.width + node.marginSize
+              if (node.rootNodesep && node.firstLeafNode) {
+                node.xStart += node.rootNodesep
+                xStart += node.rootNodesep
+              }
             }
           }
           if (props.direction === 'vertical') {

@@ -3,12 +3,17 @@ import type { Node } from '../type'
 
 export class TreeNode {
 	id!: number | string
+  parent_id!: number | string
+  first!: boolean
+  lastLeafNode?: boolean
+  firstLeafNode?: boolean
   name?: string
   level!: number
   children?: Array<Node>
   line1!: number
   line2!: number
   marginSize!: number
+  rootNodesep!: number
 
   xStart!: number                      		// x 坐标
   yStart!: number                    			// y 坐标
@@ -26,6 +31,7 @@ export class TreeNode {
 	close?: boolean
 
 	prevNode?: Node;                        // 前一个兄弟节点
+	nextNode?: Node;                        // 后一个兄弟节点
 	parentNode?: Node;                      // 父节点
   toolsHandle?: () => void;
 
