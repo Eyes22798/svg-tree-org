@@ -47,6 +47,8 @@ export interface Node extends Data {
 export interface LinkNode {
   source: string | number
   target: string | number
+  lineColor?: string
+  offset?: Array<number>
 }
 
 export interface DrawT {

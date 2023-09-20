@@ -23,7 +23,6 @@ export const originData = [
     id: 41,
     name: "四层",
     parent_id: 40,
-    lineColor: '#2ABC80',
   },
   // {
   //   id: 42,
@@ -49,7 +48,6 @@ export const originData = [
     id: 65,
     name: "二层2",
     parent_id: 28,
-    lineColor: '#2ABC80',
   },
   // {
   //   id: 66,
@@ -77,6 +75,47 @@ export const originData = [
     parent_id: 28,
   },
   {
+    id: 92,
+    name: "二层6",
+    parent_id: 28,
+  },
+  {
+    id: 93,
+    name: "二层6",
+    parent_id: 28,
+  },
+  {
+    id: 94,
+    name: "二层6",
+    parent_id: 28,
+  },
+  {
+    id: 95,
+    name: "二层6",
+    parent_id: 28,
+  },
+  {
+    id: 96,
+    name: "二层6",
+    parent_id: 95,
+  },
+  {
+    id: 97,
+    name: "二层6",
+    parent_id: 95,
+  },
+  {
+    id: 98,
+    name: "二层6",
+    parent_id: 95,
+  },
+  {
+    id: 99,
+    name: "二层6",
+    parent_id: 95,
+  },
+
+  {
     id: 73,
     name: "二层5-1",
     parent_id: 71,
@@ -90,7 +129,6 @@ export const originData = [
     id: 81,
     name: "2121",
     parent_id: 65,
-    lineColor: '#2ABC80',
   },
   {
     id: 82,
@@ -129,6 +167,16 @@ export const originData = [
     name: "104",
     parent_id: 103,
   },
+  {
+    id: 105,
+    name: "105",
+    parent_id: 103,
+  },
+  {
+    id: 106,
+    name: "106",
+    parent_id: 103,
+  },
 
   {
     id: 200,
@@ -151,15 +199,65 @@ export const originData = [
     parent_id: 202,
   },
   {
-    id: 204,
-    name: "204",
-    parent_id: 202,
+    id: 205,
+    name: "205",
+    parent_id: 203,
+  },
+  {
+    id: 206,
+    name: "206",
+    parent_id: 203,
+  },
+  {
+    id: 207,
+    name: "207",
+    parent_id: 203,
   },
 ]
 
 export const linkNodeData = [
-  // {
-  //   source: 28,
-  //   target: 100
-  // }
+  {
+    source: 28,
+    target: 100,
+  },
+  {
+    source: 28,
+    target: 200,
+  },
+
+  {
+    source: 28,
+    target: 104,
+    offset: [-39, 0, -39, 0],
+    lineColor: '#2ABC80',
+  },
+  {
+    source: 28,
+    target: 105,
+    offset: [-39, 0, -39, 0],
+    lineColor: '#2ABC80',
+  },
+  {
+    source: 28,
+    target: 106,
+    offset: [-39, 0, -39, 0],
+  },
+
+  {
+    source: 28,
+    target: 205,
+    offset: [-39, 0, -39, 0],
+    lineColor: '#2ABC80',
+  },
+  {
+    source: 28,
+    target: 206,
+    offset: [-39, 0, -39, 0],
+    lineColor: '#2ABC80',
+  },
+  {
+    source: 28,
+    target: 207,
+    offset: [-39, 0, -39, 0],
+  }
 ]

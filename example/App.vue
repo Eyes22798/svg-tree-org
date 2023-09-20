@@ -8,21 +8,21 @@
         :data="data"
         :direction="direction"
         :zoomable="zoomable"
-        lineColor="#115DDB"
+        lineColor="#ccc"
         :lineArrow="lineArrow"
         :lineCircle="lineCircle"
-        :collapsable="true"
-        :nodeWidth="70"
-        :nodeHeight="60"
-        :rootNodesep="100"
+        :collapsable="false"
+        :nodeWidth="100"
+        :nodeHeight="24"
+        :rootNodesep="150"
         :marginSize="0"
         :linkNodeData="linkData"
         @line-mouseover="handleLineMouseover"
       >
         <template #node="slotProps">
-          <div class="node-item">
-            <img style="width: 56px;" src="./img/terminal.png" alt="">
-            <p style="display: block;color: #999;margin: 0;font-size: 12px;">{{ slotProps.node.id }}Desktop</p>
+          <div class="node-item" style="display: flex;align-items: center;gap: 8px;">
+            <img style="width: 24px;" src="./img/group.svg" alt="">
+            <p style="display: inline-block;color: #999;margin: 0;font-size: 12px;">{{ slotProps.node.id }}Desktop</p>
           </div>
         </template>
       </svg-tree-org>
@@ -52,7 +52,7 @@ export default defineComponent({
     }
 
     const lineArrow = ref({
-      open: true,
+      open: false,
       markerWidth: 5,
       markerHeight: 8,
       refX: 0,
@@ -61,7 +61,7 @@ export default defineComponent({
     })
 
     const lineCircle = ref({
-      open: true,
+      open: false,
       markerWidth: 8,
       markerHeight: 8,
       refX: 4,

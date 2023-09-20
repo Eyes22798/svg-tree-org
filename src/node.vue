@@ -120,7 +120,7 @@
         class="link-line"
         :d="linkLineDth"
         fill="none"
-        :stroke="lineColor"
+        :stroke="linkLineColor"
         :stroke-width="lineWidth"
         style="marker-mid:url(#markerArrow);"
       />
@@ -331,26 +331,44 @@ export default defineComponent({
     }
 
     const linkLineDth = ref('') // 跨节点连接线
+    const linkLineColor = ref('')
     const linkNodeData = inject('linkNodeData') as unknown as Array<LinkNode>
     const treeData = inject('treeData') as unknown as Array<Node>
+    const rootNodesep = inject('rootNodesep') as unknown as number
     const createLinkLine = () => {
-      let linkLine: Array<Node | undefined> = []
       if (props.target) {
         const source = linkNodeData.find((item) => item.target === props.target)?.source ?? -1
+        const offset = linkNodeData.find((item) => item.target === props.target)?.offset ?? [0, 0, 0, 0]
+        linkLineColor.value = linkNodeData.find((item) => item.target === props.target)?.lineColor ?? props.lineColor
+
         const sourceNode = findTreeNode(source, treeData)
         const targetNode = findTreeNode(props.target, treeData)
-        linkLine = [sourceNode, targetNode]
         if (sourceNode?.xStart === targetNode?.xStart) {
           const y1 = Number(sourceNode?.yStart) + (node.value.height / 2)
           const y2 = Number(targetNode?.yStart) + (node.value.height / 2)
-          const q1 = Number(sourceNode?.xStart) - node.value.width
+          const q1 = Number(sourceNode?.xStart) - node.value.width / 2
           const q2 = y1 + (y2 - y1) / 2
 
           linkLineDth.value = `M ${sourceNode?.xStart}, ${y1} Q ${q1}, ${q2} ${targetNode?.xStart}, ${y2}`
         } else {
-          // console.log(sourceNode, targetNode)
+          const x1 = Number(sourceNode?.xStart) + (node.value.width / 2) + offset[0]
+          const y1 = Number(sourceNode?.yStart) + node.value.height + offset[1]
+          const x2 = Number(targetNode?.xStart) + node.value.width / 2 + offset[2]
+          const y2 = Number(targetNode?.yStart) + offset[3]
+
+          const mx1 = x1
+          const my1 = y1 + (y2 - y1) / 2
+
+          const mx2 = x1 + (x2 - x1) / 2
+          const my2 = y1 + (y2 - y1) / 2
+
+          const mx3 = x2
+          const my3 = y1 + (y2 - y1) / 2
+
+          console.log(x1, y1, x2, y2, mx1, my1, mx2, my2, mx3, my3)
+
+          linkLineDth.value = `M ${x1},${y1} C ${mx1},${my1 + rootNodesep} ${mx3},${my3} ${x2},${y2}`
         }
-        // console.log('s t', linkLineDth.value)
       }
     }
 
@@ -395,7 +413,8 @@ export default defineComponent({
       handleLineMouseout,
       createLinkLine,
       linkNodeData,
-      linkLineDth
+      linkLineDth,
+      linkLineColor
     }
   }
 })

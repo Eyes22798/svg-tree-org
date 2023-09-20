@@ -295,6 +295,7 @@ export default defineComponent({
     const setNodeLink = () => {
       provide('linkNodeData', props.linkNodeData)
       provide('treeData', currentTreeData)
+      provide('rootNodesep', props.rootNodesep)
     }
 
     const matrixTransformSVG = (treeData: Array<Node>) => {
