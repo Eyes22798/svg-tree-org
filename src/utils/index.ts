@@ -67,17 +67,22 @@ export function findFirstLeafNode(tree: Array<Data>): Data | null {
   return null; // 如果树中没有叶子节点，返回 null
 }
 
-export const findTreeNode = (id: string | number, tree: Array<Node>): Node | undefined => {
-  let node: Node | undefined  = undefined
-  const findNode = (id: string | number, tree: Array<Node>) => {
-    node = tree.find((item) => item.id === id)
-    if (node || tree.length === 0) return
-    for (const v of tree) {
-      findNode(id, v.children ?? [])
+export const findTreeNode = (id: string | number, tree: Array<Node>): Node | null => {
+  if (!Array.isArray(tree) || tree.length === 0) {
+    return null
+  }
+
+  for (const node of tree) {
+    if (node.id === id) {
+      return node
+    }
+    if (node.children && node.children.length > 0) {
+      const current = findTreeNode(id, node.children)
+      if (current) return current
     }
   }
-  findNode(id, tree)
-  return node
+
+  return null
 }
 
 export const uuid = () => {
