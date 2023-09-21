@@ -376,6 +376,22 @@ export default defineComponent({
       emit('zoom', e, viewBox.value)
     }
 
+    const handleZoom = (r: number) => {
+      const startViewBox = viewBox.value.split(' ').map(n => parseFloat(n))
+
+      viewBox.value = `${startViewBox[0]} ${startViewBox[1]} ${startViewBox[2] * r} ${startViewBox[3] * r}`
+    }
+
+    const zoomNarrow = () => {
+      const r = 1
+      handleZoom(r + 0.1)
+    }
+
+    const zoomEnlarge = () => {
+      const r = 1
+      handleZoom(r - 0.1)
+    }
+
     // 拖拽相关功能
     const dragging = ref(false)
     const mousedown = () => {
@@ -464,7 +480,9 @@ export default defineComponent({
       mousedown,
       mouseup,
       handleLineMouseover,
-      handleLineMouseout
+      handleLineMouseout,
+      zoomNarrow,
+      zoomEnlarge
     }
   }
 })

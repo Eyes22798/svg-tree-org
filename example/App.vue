@@ -1,10 +1,17 @@
 <template>
   <div class="root">
-    <button @click="handleClick" style="display: block;">
-      转换方向
-    </button>
+    <div style="display: flex;gap: 8px;">
+      <button @click="handleClick">
+        转换方向
+      </button>
+
+      <button @click="hanldeZoom(0)">缩小</button>
+      <button @click="hanldeZoom(1)">增大</button>
+    </div>
+
     <div class="container">
       <svg-tree-org
+        ref="treeOrgRef"
         :data="data"
         :direction="direction"
         :zoomable="zoomable"
@@ -40,6 +47,7 @@ export default defineComponent({
     SvgTreeOrg,
   },
   setup() {
+    const treeOrgRef = ref<InstanceType<typeof SvgTreeOrg> | null>(null)
     const direction = ref('vertical')
     const data = ref(originData)
     const linkData = ref(linkNodeData)
@@ -77,7 +85,16 @@ export default defineComponent({
 
     const zoomable = ref(true)
 
+    const hanldeZoom = (r: number) => {
+      if (r > 0) {
+        treeOrgRef.value?.zoomEnlarge()
+      } else {
+        treeOrgRef.value?.zoomNarrow()
+      }
+    }
+
     return {
+      treeOrgRef,
       lineArrow,
       lineCircle,
       data,
@@ -85,7 +102,8 @@ export default defineComponent({
       zoomable,
       linkData,
       handleClick,
-      handleLineMouseover
+      handleLineMouseover,
+      hanldeZoom
     }
   }
 })
