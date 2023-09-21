@@ -111,12 +111,8 @@
       >{{ node.close ? '+' : '-' }}</text>
     </g>
     <g id="link-line">
-      <defs>
-        <marker id="markerArrow" markerWidth="13" markerHeight="13" refX="2" refY="6" orient="auto">
-          <path d="M2,2 L2,11 L10,6 L2,2" style="fill: #000;" />
-        </marker>
-      </defs>
       <path
+        :id="node.id + 'line-path'"
         class="link-line"
         :d="linkLineDth"
         fill="none"
@@ -124,6 +120,12 @@
         :stroke-width="lineWidth"
         style="marker-mid:url(#markerArrow);"
       />
+
+      <text :style="{ dominantBaseline: 'central', fill: linkLineColor, fontSize: '8px' }">
+        <textPath :xlink:href="`#${node.id}line-path`" startOffset="30%">➤</textPath>
+        <textPath :xlink:href="`#${node.id}line-path`" startOffset="60%">➤</textPath>
+        <textPath :xlink:href="`#${node.id}line-path`" startOffset="80%">➤</textPath>
+      </text>
     </g>
   </g>
 </template>
@@ -364,8 +366,6 @@ export default defineComponent({
 
           const mx3 = x2
           const my3 = y1 + (y2 - y1) / 2
-
-          console.log(x1, y1, x2, y2, mx1, my1, mx2, my2, mx3, my3)
 
           linkLineDth.value = `M ${x1},${y1} C ${mx1},${my1 + rootNodesep} ${mx3},${my3} ${x2},${y2}`
         }
