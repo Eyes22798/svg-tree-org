@@ -16,6 +16,7 @@
         :direction="direction"
         :zoomable="zoomable"
         lineColor="#ccc"
+        :lineWidth="lineWidth"
         :lineArrow="lineArrow"
         :lineCircle="lineCircle"
         :collapsable="false"
@@ -59,6 +60,8 @@ export default defineComponent({
       }
     }
 
+    const lineWidth = ref(1)
+
     const lineArrow = ref({
       open: false,
       markerWidth: 5,
@@ -101,9 +104,10 @@ export default defineComponent({
       direction,
       zoomable,
       linkData,
+      lineWidth,
       handleClick,
       handleLineMouseover,
-      hanldeZoom
+      hanldeZoom,
     }
   }
 })

@@ -30,6 +30,7 @@
       :node="child"
       :treeDirection="child.treeDirection"
       :key="child.id"
+      :lineWidth="lineWidth"
       :lineColor="lineColor"
       :hasSlot="hasSlot"
       :lineArrow="lineArrow"

@@ -20,6 +20,7 @@
       <tree-node
         v-for="node in treeData"
         :id="node.id"
+        :lineWidth="lineWidth"
         :lineColor="lineColor"
         :treeDirection="direction"
         :node="node"
@@ -73,6 +74,10 @@ export default defineComponent({
     toolsHandle:{
       type: Function,
       default: () => (null)
+    },
+    lineWidth: {
+      type: Number,
+      default: 1
     },
     lineColor: {
       type: String,
