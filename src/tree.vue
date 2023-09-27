@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, PropType, watch, provide } from '@vue/composition-api'
+import { defineComponent, ref, onMounted, PropType, watch, provide, nextTick } from '@vue/composition-api'
 import type { Data, Node, LinkNode } from './type'
 import { TreeNode } from './core/tree-node'
 import treeNode from './node.vue'
@@ -138,6 +138,14 @@ export default defineComponent({
     line2: {
       type: Number,
       default: 80
+    },
+    treeCenter: {
+      type: Boolean,
+      default: true
+    },
+    defaultScale: {
+      type: Number,
+      default: 1
     }
   },
   setup(props, { emit }) {
@@ -159,14 +167,14 @@ export default defineComponent({
     const treeWidth = ref(0)
     const treeHeight = ref(0)
     const viewBox = ref('0 0 0 0')
+    let svgWidth = 0
+    let svgHeight = 0
     // 设置节点坐标和svg宽高
     const setAxis = () => {
       const levelXStart: Record<number, number> = {}  // 寻找同级节点的离当前线最近的x坐标，防止节点重叠
 			const levelYStart: Record<number, number> = {}  // 寻找同级节点的离当前线最近的y坐标，防止节点重叠
 
-      let xStart = 0,
-        svgWidth = 0,
-        svgHeight = 0
+      let xStart = 0
       let yStart = 0
 
       const func = (arr: Array<Node>, parent?: Node) => {
@@ -282,18 +290,44 @@ export default defineComponent({
       }
 
       func(currentTreeData as unknown as Array<Node>)
-
       treeData.value = currentTreeData as unknown as Array<Node>
 
+      fitContent()
+    }
+
+    // 垂直水平居中
+    const fitContent = async () => {
       const boxWidth = treeBox.value && window.getComputedStyle(treeBox.value).width
       const boxHeight = treeBox.value && window.getComputedStyle(treeBox.value).height
 
       treeWidth.value = Number(boxWidth?.split('px')[0])
       treeHeight.value = Number(boxHeight?.split('px')[0])
 
-      const xMiddle = (treeWidth.value - svgWidth) / 2 > 0 ? (treeWidth.value - svgWidth) / 2 : 0
-      const yMiddle = (treeHeight.value - svgHeight) / 2 > 0 ? (treeHeight.value - svgHeight) / 2 : 0
-      viewBox.value = `${-xMiddle} ${-yMiddle} ${treeWidth.value} ${treeHeight.value}`
+      const xMiddle = props.treeCenter
+        ? (treeWidth.value - svgWidth) / 2 > 0 ? (treeWidth.value - svgWidth) / 2 : 0
+        : 0
+      const yMiddle = props.treeCenter
+        ? (treeHeight.value - svgHeight) / 2 > 0 ? (treeHeight.value - svgHeight) / 2 : 0
+        : 0
+
+      viewBox.value = `${-xMiddle} ${-yMiddle} ${treeWidth.value * 1 / props.defaultScale} ${treeHeight.value * 1 / props.defaultScale}`
+
+      if (props.defaultScale === 1) return
+      await nextTick()
+      const lastGElement = treeBox.value?.children[0].lastElementChild
+      if (lastGElement) {
+        const gWidth = lastGElement.getBoundingClientRect().width
+        const gHeight= lastGElement.getBoundingClientRect().height
+
+        const gXMiddle = props.treeCenter
+          ? (treeWidth.value - gWidth) > 0 ? (treeWidth.value - gWidth) / 2 / props.defaultScale : 0
+          : 0
+        const gYMiddle = props.treeCenter
+          ? (treeHeight.value - gHeight) > 0 ? (treeHeight.value - gHeight) / 2 / props.defaultScale : 0
+          : 0
+
+        viewBox.value = `${-gXMiddle} ${-gYMiddle} ${treeWidth.value * 1 / props.defaultScale} ${treeHeight.value * 1 / props.defaultScale}`
+      }
     }
 
     // 跨节点连接
@@ -378,13 +412,14 @@ export default defineComponent({
       let moveBackViewBox = `${middleViewBox[0] + delta.dx} ${middleViewBox[1] + delta.dy} ${middleViewBox[2]} ${middleViewBox[3]}`
       viewBox.value = moveBackViewBox
 
-      emit('zoom', e, viewBox.value)
+      emit('zoom', viewBox.value)
     }
 
     const handleZoom = (r: number) => {
       const startViewBox = viewBox.value.split(' ').map(n => parseFloat(n))
 
       viewBox.value = `${startViewBox[0]} ${startViewBox[1]} ${startViewBox[2] * r} ${startViewBox[3] * r}`
+      emit('zoom', viewBox.value)
     }
 
     const zoomNarrow = () => {
@@ -487,7 +522,8 @@ export default defineComponent({
       handleLineMouseover,
       handleLineMouseout,
       zoomNarrow,
-      zoomEnlarge
+      zoomEnlarge,
+      fitContent
     }
   }
 })
