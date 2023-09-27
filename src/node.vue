@@ -47,7 +47,7 @@
       </template>
     </tree-node>
     <g id="node-line" :close="String(node.close)">
-      <path v-if="node.parentNode && node.prevNode" class="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" stroke-linecap="round" />
+      <path v-if="node.parentNode && node.prevNode" class="line1" :d="line1Dth" fill="none" :stroke="lineColor" :stroke-width="lineWidth" stroke-linejoin="round" stroke-linecap="round" />
 
       <g
         @mouseover="handleLineMouseover(node)"

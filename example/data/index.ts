@@ -139,7 +139,7 @@ export const originData = [
     id: 83,
     name: "2124",
     parent_id: 65,
-    lineDasharray: '5, 5',
+    lineDasharray: '1, 5',
   },
 
   {
