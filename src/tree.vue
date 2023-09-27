@@ -50,7 +50,6 @@ import { TreeNode } from './core/tree-node'
 import treeNode from './node.vue'
 import { transformData2Tree } from './utils'
 import cloneDeep from 'lodash.clonedeep'
-import {scale, rotate, translate, compose, applyToPoint, flipY } from 'transformation-matrix'
 
 export default defineComponent({
   name: 'SvgTreeOrg',
@@ -304,23 +303,23 @@ export default defineComponent({
       provide('rootNodesep', props.rootNodesep)
     }
 
-    const matrixTransformSVG = (treeData: Array<Node>) => {
-      let matrix = compose(
-        rotate(Math.PI/3, 200, 200)
-      )
-      const transform = (treeData: Array<Node>) => {
-        treeData.forEach((node) => {
-          const { x, y } = applyToPoint(matrix, {x: node.xStart, y: node.yStart})
-          node.xStart = x
-          node.yStart = y
-          if (node.children && node.children?.length > 0) {
-            transform(node.children)
-          }
-        })
-      }
+    // const matrixTransformSVG = (treeData: Array<Node>) => {
+    //   let matrix = compose(
+    //     rotate(Math.PI/3, 200, 200)
+    //   )
+    //   const transform = (treeData: Array<Node>) => {
+    //     treeData.forEach((node) => {
+    //       const { x, y } = applyToPoint(matrix, {x: node.xStart, y: node.yStart})
+    //       node.xStart = x
+    //       node.yStart = y
+    //       if (node.children && node.children?.length > 0) {
+    //         transform(node.children)
+    //       }
+    //     })
+    //   }
 
-      transform(treeData)
-    }
+    //   transform(treeData)
+    // }
 
     // client与svg坐标相互转换
     const svgMatrixTransform = (e: DragEvent | WheelEvent) => {
