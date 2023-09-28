@@ -11,6 +11,10 @@ Features:
 + drag
 + fitContent
 
+## Example
+
+  ![default](./screenshot.png)
+
 ## Usage
 
 ### NPM
@@ -79,10 +83,6 @@ It is called when the mouse leaves the line.
 
 - params `e` `Event`
 - params `data` `Current node data`
-
-## Example
-
-  ![default](./screenshot.png)
 
 ## License
 [MIT](./LICENSE)
