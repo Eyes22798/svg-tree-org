@@ -82,7 +82,7 @@ It is called when the mouse leaves the line.
 
 ## Example
 
-  <!-- ![default](./screenshot.png) -->
+  ![default](./screenshot.png)
 
 ## License
 [MIT](./LICENSE)
