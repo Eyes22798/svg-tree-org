@@ -134,6 +134,7 @@ export const originData = [
     id: 82,
     name: "2123",
     parent_id: 65,
+    lineColor: '#2ABC80',
   },
   {
     id: 83,
@@ -161,6 +162,8 @@ export const originData = [
     id: 103,
     name: "103",
     parent_id: 102,
+    lineColor: '#2ABC80',
+
   },
   {
     id: 104,

@@ -15,23 +15,28 @@
         :data="data"
         :direction="direction"
         :zoomable="zoomable"
-        lineColor="#ccc"
+        :treeCenter="true"
+        :collapsable="true"
+        lineColor="#115DDB"
         :lineWidth="lineWidth"
         :lineArrow="lineArrow"
         :lineCircle="lineCircle"
-        :treeCenter="true"
-        :collapsable="false"
         :defaultScale="1"
         :nodeWidth="100"
         :nodeHeight="24"
-        :rootNodesep="150"
-        :marginSize="0"
+        :rootNodesep="100"
+        :marginSize="5"
         :linkNodeData="linkData"
         @line-mouseover="handleLineMouseover"
       >
         <template #node="slotProps">
-          <div class="node-item" style="display: flex;align-items: center;gap: 8px;">
-            <img style="width: 24px;" src="./img/group.svg" alt="">
+          <div v-if="slotProps.node.parent_id === 0" class="node-item" style="display: flex;align-items: center;gap: 8px;">
+            <img style="width: 24px;" src="./img/home.svg" alt="">
+            <p style="display: inline-block;color: #999;margin: 0;font-size: 12px;">{{ slotProps.node.id }}Desktop</p>
+          </div>
+
+          <div v-else class="node-item" style="display: flex;align-items: center;gap: 8px;">
+            <img style="width: 24px;" src="./img/a-cartfull.svg" alt="">
             <p style="display: inline-block;color: #999;margin: 0;font-size: 12px;">{{ slotProps.node.id }}Desktop</p>
           </div>
         </template>
@@ -65,7 +70,7 @@ export default defineComponent({
     const lineWidth = ref(1)
 
     const lineArrow = ref({
-      open: false,
+      open: true,
       markerWidth: 5,
       markerHeight: 8,
       refX: 0,
@@ -74,7 +79,7 @@ export default defineComponent({
     })
 
     const lineCircle = ref({
-      open: false,
+      open: true,
       markerWidth: 8,
       markerHeight: 8,
       refX: 4,
