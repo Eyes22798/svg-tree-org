@@ -21,7 +21,7 @@
         :lineCircle="lineCircle"
         :treeCenter="true"
         :collapsable="false"
-        :defaultScale="0.5"
+        :defaultScale="1"
         :nodeWidth="100"
         :nodeHeight="24"
         :rootNodesep="150"

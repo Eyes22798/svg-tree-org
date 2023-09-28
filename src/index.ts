@@ -1,9 +1,9 @@
 import { PluginFunction } from "vue"
-import CustomButtonCom from './index.vue'
-export const CustomButton  = CustomButtonCom
+import TreeOrg from './tree.vue'
+export const CustomTreeOrg  = TreeOrg
 
 const install: PluginFunction<null> = function (Vue) {
-  Vue.component(CustomButtonCom.name, CustomButton)
+  Vue.component(TreeOrg.name, CustomTreeOrg)
 }
 
 export default install

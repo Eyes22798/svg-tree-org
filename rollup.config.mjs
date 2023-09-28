@@ -13,9 +13,10 @@ import { DEFAULT_EXTENSIONS } from '@babel/core'
 
 import tsConfig from './tsconfig.types.json' assert { type: "json" }
 import pkg from './package.json' assert { type: "json" }
+
 const PREFIX = '@eyes22798'
 const name = pkg.name.split(PREFIX + '/')[1]
-const fileName = PREFIX + '-' + name
+
 const kebabToCamel = (name) => {
   name = name.replace(/-(\w)/g, (match, p1) => {
     return p1.toUpperCase();
@@ -61,7 +62,7 @@ const buildConfig = {
   output: {
     name: kebabToCamel(name),
     format: 'esm',
-    file: `dist/${fileName}.esm.js`
+    file: `dist/${name}.esm.js`
   },
   plugins: [
     ...baseConfig.plugins.preVue,
@@ -92,12 +93,12 @@ const buildConfig = {
 
 if (argv.format === 'umd') {
   buildConfig.output.format = 'umd'
-  buildConfig.output.file = `dist/${fileName}.js`
+  buildConfig.output.file = `dist/${name}.js`
 }
 
 if (argv.format === 'cjs') {
   buildConfig.output.format = 'cjs'
-  buildConfig.output.file = `dist/${fileName}.common.js`
+  buildConfig.output.file = `dist/${name}.common.js`
 }
 
 export default buildConfig
