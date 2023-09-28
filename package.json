@@ -1,6 +1,6 @@
 {
   "name": "@eyes22798/svg-tree-org",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "helox.ye",
   "main": "svg-tree-org.common.js",
   "module": "dist/svg-tree-org.esm.js",
@@ -111,7 +111,6 @@
   },
   "standard-version": {
     "scripts": {
-      "prerelease": "npm run test:unit",
       "postbump": "npm run build"
     }
   }
