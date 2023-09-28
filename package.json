@@ -14,6 +14,9 @@
   "homepage": "https://github.com/Eyes22798/svg-tree-org",
   "repository": "https://github.com/Eyes22798/svg-tree-org",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT",
   "description": "a org tree by svg",
   "scripts": {
