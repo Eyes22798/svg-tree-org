@@ -523,7 +523,8 @@ export default defineComponent({
       handleLineMouseout,
       zoomNarrow,
       zoomEnlarge,
-      fitContent
+      fitContent,
+      setAxis
     }
   }
 })

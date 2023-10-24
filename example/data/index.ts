@@ -143,124 +143,124 @@ export const originData = [
     lineDasharray: '1, 5',
   },
 
-  {
-    id: 100,
-    name: "100",
-    parent_id: 0,
-  },
-  {
-    id: 101,
-    name: "101",
-    parent_id: 100,
-  },
-  {
-    id: 102,
-    name: "102",
-    parent_id: 101,
-  },
-  {
-    id: 103,
-    name: "103",
-    parent_id: 102,
-    lineColor: '#2ABC80',
+  // {
+  //   id: 100,
+  //   name: "100",
+  //   parent_id: 0,
+  // },
+  // {
+  //   id: 101,
+  //   name: "101",
+  //   parent_id: 100,
+  // },
+  // {
+  //   id: 102,
+  //   name: "102",
+  //   parent_id: 101,
+  // },
+  // {
+  //   id: 103,
+  //   name: "103",
+  //   parent_id: 102,
+  //   lineColor: '#2ABC80',
 
-  },
-  {
-    id: 104,
-    name: "104",
-    parent_id: 103,
-  },
-  {
-    id: 105,
-    name: "105",
-    parent_id: 103,
-  },
-  {
-    id: 106,
-    name: "106",
-    parent_id: 103,
-  },
+  // },
+  // {
+  //   id: 104,
+  //   name: "104",
+  //   parent_id: 103,
+  // },
+  // {
+  //   id: 105,
+  //   name: "105",
+  //   parent_id: 103,
+  // },
+  // {
+  //   id: 106,
+  //   name: "106",
+  //   parent_id: 103,
+  // },
 
-  {
-    id: 200,
-    name: "200",
-    parent_id: 0,
-  },
-  {
-    id: 201,
-    name: "201",
-    parent_id: 200,
-  },
-  {
-    id: 202,
-    name: "202",
-    parent_id: 201,
-  },
-  {
-    id: 203,
-    name: "203",
-    parent_id: 202,
-  },
-  {
-    id: 205,
-    name: "205",
-    parent_id: 203,
-  },
-  {
-    id: 206,
-    name: "206",
-    parent_id: 203,
-  },
-  {
-    id: 207,
-    name: "207",
-    parent_id: 203,
-  },
+  // {
+  //   id: 200,
+  //   name: "200",
+  //   parent_id: 0,
+  // },
+  // {
+  //   id: 201,
+  //   name: "201",
+  //   parent_id: 200,
+  // },
+  // {
+  //   id: 202,
+  //   name: "202",
+  //   parent_id: 201,
+  // },
+  // {
+  //   id: 203,
+  //   name: "203",
+  //   parent_id: 202,
+  // },
+  // {
+  //   id: 205,
+  //   name: "205",
+  //   parent_id: 203,
+  // },
+  // {
+  //   id: 206,
+  //   name: "206",
+  //   parent_id: 203,
+  // },
+  // {
+  //   id: 207,
+  //   name: "207",
+  //   parent_id: 203,
+  // },
 ]
 
 export const linkNodeData = [
-  {
-    source: 28,
-    target: 100,
-  },
-  {
-    source: 28,
-    target: 200,
-  },
+  // {
+  //   source: 28,
+  //   target: 100,
+  // },
+  // {
+  //   source: 28,
+  //   target: 200,
+  // },
 
-  {
-    source: 28,
-    target: 104,
-    offset: [-39, 0, -39, 0],
-    lineColor: '#2ABC80',
-  },
-  {
-    source: 28,
-    target: 105,
-    offset: [-39, 0, -39, 0],
-    lineColor: '#2ABC80',
-  },
-  {
-    source: 28,
-    target: 106,
-    offset: [-39, 0, -39, 0],
-  },
+  // {
+  //   source: 28,
+  //   target: 104,
+  //   offset: [-39, 0, -39, 0],
+  //   lineColor: '#2ABC80',
+  // },
+  // {
+  //   source: 28,
+  //   target: 105,
+  //   offset: [-39, 0, -39, 0],
+  //   lineColor: '#2ABC80',
+  // },
+  // {
+  //   source: 28,
+  //   target: 106,
+  //   offset: [-39, 0, -39, 0],
+  // },
 
-  {
-    source: 28,
-    target: 205,
-    offset: [-39, 0, -39, 0],
-    lineColor: '#2ABC80',
-  },
-  {
-    source: 28,
-    target: 206,
-    offset: [-39, 0, -39, 0],
-    lineColor: '#2ABC80',
-  },
-  {
-    source: 28,
-    target: 207,
-    offset: [-39, 0, -39, 0],
-  }
+  // {
+  //   source: 28,
+  //   target: 205,
+  //   offset: [-39, 0, -39, 0],
+  //   lineColor: '#2ABC80',
+  // },
+  // {
+  //   source: 28,
+  //   target: 206,
+  //   offset: [-39, 0, -39, 0],
+  //   lineColor: '#2ABC80',
+  // },
+  // {
+  //   source: 28,
+  //   target: 207,
+  //   offset: [-39, 0, -39, 0],
+  // }
 ]
