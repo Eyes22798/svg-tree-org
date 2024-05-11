@@ -21,6 +21,10 @@
         <span class="bn54span">展开收起</span>
       </button>
 
+      <button class="bn54" @click="handleChangeDec()">
+        <span class="bn54span">装饰器</span>
+      </button>
+
       <div style="position:relative; display:inline-block">
         <button type="button" class="bn54 btn btn-secondary herramienta">
           <span class="bn54span">边颜色</span>
@@ -141,6 +145,11 @@ export default defineComponent({
       console.log(lineColor.value)
     }
 
+    const handleChangeDec = () => {
+      lineArrow.value.open = !lineArrow.value.open
+      // lineCircle.value.open = !lineCircle.value.open
+    }
+
     return {
       lineColor,
       handleColorChange,
@@ -159,6 +168,7 @@ export default defineComponent({
       hanldeZoom,
       collapsable,
       handleCollapseable,
+      handleChangeDec,
     }
   }
 })

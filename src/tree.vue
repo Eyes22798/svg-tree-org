@@ -195,8 +195,8 @@ export default defineComponent({
           node.rootNodesep = props.rootNodesep
           node.line1 = props.line1
           node.line2 = props.line2
-          node.yStart = y
-          if (props.direction === 'vertical') node.xStart = x
+          node.yStart = y // 方向为竖向，先计算好 y
+          if (props.direction === 'vertical') node.xStart = x // 向为竖横，先计算好 y
           node.parentNode = parent
           node.prevNode = arr[i - 1]
           node.nextNode = arr[i + 1]
@@ -280,6 +280,8 @@ export default defineComponent({
           } else {
             levelXStart[v.level] = xStart
           }
+
+          console.log(v.id, levelYStart)
         })
 
         // 画布大小设置
